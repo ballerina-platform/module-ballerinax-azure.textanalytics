@@ -10,9 +10,18 @@
     "title": "Text Analytics Client",
     "description": "The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in <a href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>"
   },
+  "host": "westus.api.cognitive.microsoft.com",
+  "basePath": "/text/analytics/v3.1",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
   "securityDefinitions": {
     "apim_key": {
       "type": "apiKey",
+      "description": "Azure Cognitive Services subscription key supplied in the Ocp-Apim-Subscription-Key header",
       "name": "Ocp-Apim-Subscription-Key",
       "in": "header"
     }
@@ -74,11 +83,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Submit analysis job request": {
-            "$ref": ".//examples//SuccessfulAnalyzeRequest.json"
-          }
-        },
         "deprecated": false,
         "x-ms-long-running-operation": true
       }
@@ -129,11 +133,6 @@
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
-          }
-        },
-        "x-ms-examples": {
-          "Successful Get Analysis job status request": {
-            "$ref": ".//examples//SuccessfulAnalyzeStatusRequest.json"
           }
         },
         "deprecated": false
@@ -187,11 +186,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Health request": {
-            "$ref": ".//examples//SuccessfulHealthStatusRequest.json"
-          }
-        },
         "deprecated": false
       },
       "delete": {
@@ -221,11 +215,6 @@
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
-          }
-        },
-        "x-ms-examples": {
-          "Successful Health request": {
-            "$ref": ".//examples//SuccessfulHealthDeleteRequest.json"
           }
         },
         "deprecated": false,
@@ -275,11 +264,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Health request": {
-            "$ref": ".//examples//SuccessfulHealthRequest.json"
-          }
-        },
         "deprecated": false,
         "x-ms-long-running-operation": true
       }
@@ -326,11 +310,6 @@
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
-          }
-        },
-        "x-ms-examples": {
-          "Successful Entities request": {
-            "$ref": ".//examples//SuccessfulEntitiesRequest.json"
           }
         },
         "deprecated": false
@@ -389,11 +368,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Entity PII request": {
-            "$ref": ".//examples//SuccessfulEntityPIIRequest.json"
-          }
-        },
         "deprecated": false
       }
     },
@@ -441,11 +415,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Entity Linking request": {
-            "$ref": ".//examples//SuccessfulEntityLinkingRequest.json"
-          }
-        },
         "deprecated": false
       }
     },
@@ -490,11 +459,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "Successful Key Phrase request": {
-            "$ref": ".//examples//SuccessfulKeyPhrasesRequest.json"
-          }
-        },
         "deprecated": false
       }
     },
@@ -537,11 +501,6 @@
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
-          }
-        },
-        "x-ms-examples": {
-          "Successful Detect Language request": {
-            "$ref": ".//examples//SuccessfulLanguagesRequest.json"
           }
         },
         "deprecated": false
@@ -595,11 +554,6 @@
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
-          }
-        },
-        "x-ms-examples": {
-          "Successful Sentiment request": {
-            "$ref": ".//examples//SuccessfulSentimentRequest.json"
           }
         },
         "deprecated": false

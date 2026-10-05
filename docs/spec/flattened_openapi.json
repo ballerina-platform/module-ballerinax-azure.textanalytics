@@ -10,6 +10,9 @@
     },
     "version" : "v3.1"
   },
+  "servers" : [ {
+    "url" : "https://westus.api.cognitive.microsoft.com/text/analytics/v3.1"
+  } ],
   "security" : [ {
     "apim_key" : [ ]
   } ],
@@ -1920,8 +1923,8 @@
       },
       "StringIndexType" : {
         "type" : "string",
-        "default" : "TextElement_v8",
         "enum" : [ "TextElement_v8", "UnicodeCodePoint", "Utf16CodeUnit" ],
+        "default" : "TextElement_v8",
         "x-ms-enum" : {
           "name" : "StringIndexType",
           "modelAsString" : true,
@@ -1991,8 +1994,8 @@
         "properties" : {
           "domain" : {
             "type" : "string",
-            "default" : "none",
-            "enum" : [ "phi", "none" ]
+            "enum" : [ "phi", "none" ],
+            "default" : "none"
           },
           "model-version" : {
             "type" : "string",
@@ -2182,8 +2185,8 @@
         "description" : "(Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets",
         "schema" : {
           "type" : "string",
-          "default" : "TextElement_v8",
           "enum" : [ "TextElement_v8", "UnicodeCodePoint", "Utf16CodeUnit" ],
+          "default" : "TextElement_v8",
           "x-ms-enum" : {
             "name" : "StringIndexType",
             "modelAsString" : true,
@@ -2295,7 +2298,7 @@
       "MultiLanguageInput" : {
         "description" : "Collection of documents to analyze.",
         "content" : {
-          "*/*" : {
+          "application/json" : {
             "schema" : {
               "$ref" : "#/components/schemas/MultiLanguageBatchInput"
             }
@@ -2307,7 +2310,7 @@
       "LanguageInput" : {
         "description" : "Collection of documents to analyze for language endpoint.",
         "content" : {
-          "*/*" : {
+          "application/json" : {
             "schema" : {
               "$ref" : "#/components/schemas/LanguageBatchInput"
             }
@@ -2320,6 +2323,7 @@
     "securitySchemes" : {
       "apim_key" : {
         "type" : "apiKey",
+        "description" : "Azure Cognitive Services subscription key supplied in the Ocp-Apim-Subscription-Key header",
         "name" : "Ocp-Apim-Subscription-Key",
         "in" : "header"
       }

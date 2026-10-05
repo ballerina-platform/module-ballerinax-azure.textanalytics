@@ -774,12 +774,12 @@
             },
             "StringIndexType": {
                 "type": "string",
-                "default": "TextElement_v8",
                 "enum": [
                     "TextElement_v8",
                     "UnicodeCodePoint",
                     "Utf16CodeUnit"
                 ],
+                "default": "TextElement_v8",
                 "x-ms-enum": {
                     "name": "StringIndexType",
                     "modelAsString": true,
@@ -1714,11 +1714,11 @@
                 "properties": {
                     "domain": {
                         "type": "string",
-                        "default": "none",
                         "enum": [
                             "phi",
                             "none"
-                        ]
+                        ],
+                        "default": "none"
                     },
                     "piiCategories": {
                         "$ref": "#/components/schemas/PiiCategories"
@@ -2790,12 +2790,12 @@
                 "explode": true,
                 "schema": {
                     "type": "string",
-                    "default": "TextElement_v8",
                     "enum": [
                         "TextElement_v8",
                         "UnicodeCodePoint",
                         "Utf16CodeUnit"
                     ],
+                    "default": "TextElement_v8",
                     "x-ms-enum": {
                         "name": "StringIndexType",
                         "modelAsString": true,
