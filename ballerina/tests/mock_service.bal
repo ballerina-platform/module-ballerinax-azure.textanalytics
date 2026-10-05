@@ -23,19 +23,23 @@ service / on ep0 {
     # Cancel healthcare prediction job
     #
     # + jobId - Job ID
-    # + return - Cancel job request accepted
-    resource function delete entities/health/jobs/[string jobId]() returns http:Accepted {
+    # + return - returns can be any of following types 
+    # http:Accepted (Cancel Job request has been received)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function delete entities/health/jobs/[string jobId]() returns http:Accepted|ErrorResponseDefault {
         return http:ACCEPTED;
     }
 
     # Get analysis status and results
     #
     # + jobId - Job ID for Analyze
-    # + showStats - Include request and document level statistics
-    # + top - Maximum number of results per task
-    # + skip - Number of elements to offset in the response
-    # + return - Analysis job status and metadata
-    resource function get analyze/jobs/[string jobId](boolean? showStats, @http:Query {name: "$top"} int top = 20, @http:Query {name: "$skip"} int skip = 0) returns AnalyzeJobState {
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + top - (Optional) Set the maximum number of results per task. When both $top and $skip are specified, $skip is applied first
+    # + skip - (Optional) Set the number of elements to offset in the response. When both $top and $skip are specified, $skip is applied first
+    # + return - returns can be any of following types 
+    # http:Ok (Analysis job status and metadata)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function get analyze/jobs/[string jobId](boolean? showStats, @http:Query {name: "$top"} int top = 20, @http:Query {name: "$skip"} int skip = 0) returns AnalyzeJobState|ErrorResponseDefault {
         return {
             jobId,
             createdDateTime: "2026-10-05T09:00:00Z",
@@ -50,11 +54,13 @@ service / on ep0 {
     # Get healthcare analysis job status and results
     #
     # + jobId - Job ID
-    # + showStats - Include request and document level statistics
-    # + top - Maximum number of results per task
-    # + skip - Number of elements to offset in the response
-    # + return - Healthcare job status and results
-    resource function get entities/health/jobs/[string jobId](boolean? showStats, @http:Query {name: "$top"} int top = 20, @http:Query {name: "$skip"} int skip = 0) returns HealthcareJobState {
+    # + top - (Optional) Set the maximum number of results per task. When both $top and $skip are specified, $skip is applied first
+    # + skip - (Optional) Set the number of elements to offset in the response. When both $top and $skip are specified, $skip is applied first
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + return - returns can be any of following types 
+    # http:Ok (OK)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function get entities/health/jobs/[string jobId](boolean? showStats, @http:Query {name: "$top"} int top = 20, @http:Query {name: "$skip"} int skip = 0) returns HealthcareJobState|ErrorResponseDefault {
         return {
             jobId,
             createdDateTime: "2026-10-05T09:00:00Z",
@@ -64,7 +70,9 @@ service / on ep0 {
                 documents: [
                     {
                         id: "1",
-                        entities: [],
+                        entities: [
+                            {offset: 0, length: 9, text: "ibuprofen", category: "MedicationName", confidenceScore: 0.99}
+                        ],
                         relations: [],
                         warnings: []
                     }
@@ -77,173 +85,260 @@ service / on ep0 {
 
     # Submit analysis job
     #
-    # + payload - Collection of documents to analyze and tasks to execute
-    # + return - Analysis job accepted
-    resource function post analyze(@http:Payload AnalyzeBatchInput payload) returns http:Accepted {
-        return http:ACCEPTED;
+    # + payload - Collection of documents to analyze and tasks to execute 
+    # + return - returns can be any of following types 
+    # http:Accepted (A successful call results with an Operation-Location header used to check the status of the analysis job)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post analyze(@http:Payload AnalyzeBatchInput payload) returns AnydataAccepted|AnydataDefault {
+        return <AnydataAccepted>{
+            body: (),
+            headers: {Operation\-Location: "http://localhost:9090/analyze/jobs/3f0c9a52-7d1e-4b8a-9c36-5a1d2e7b4f10"}
+        };
     }
 
     # Submit healthcare analysis job
     #
-    # + modelVersion - Model version used for scoring
-    # + loggingOptOut - Opt out of input text logging
-    # + stringIndexType - Method used to interpret string offsets
-    # + payload - Collection of documents to analyze
-    # + return - Healthcare job accepted
-    resource function post entities/health/jobs(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? loggingOptOut, string stringIndexType = "TextElement_v8") returns http:Accepted {
-        return http:ACCEPTED;
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + stringIndexType - (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Accepted (Accepted - call results in a link where the status of the submitted job can be checked via the GET operation)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post entities/health/jobs(@http:Query {name: "model-version"} string? modelVersion, boolean? loggingOptOut, @http:Payload MultiLanguageBatchInput payload, "TextElement_v8"|"UnicodeCodePoint"|"Utf16CodeUnit" stringIndexType = "TextElement_v8") returns AnydataAccepted|AnydataDefault {
+        return <AnydataAccepted>{
+            body: (),
+            headers: {Operation\-Location: "http://localhost:9090/entities/health/jobs/8b7e4d21-0c5a-4f93-a1d6-2e9b3c6f7a58"}
+        };
     }
 
     # Linked entities from a well known knowledge base
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + stringIndexType - Method used to interpret string offsets
-    # + payload - Collection of documents to analyze
-    # + return - Linked entities for each document
-    resource function post entities/linking(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, string stringIndexType = "TextElement_v8") returns EntityLinkingResult {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + stringIndexType - (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful call results in a list of recognized entities with links to a well known knowledge base returned for each valid document)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post entities/linking(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, @http:Payload MultiLanguageBatchInput payload, "TextElement_v8"|"UnicodeCodePoint"|"Utf16CodeUnit" stringIndexType = "TextElement_v8") returns EntityLinkingResultOk|ErrorResponseDefault {
         return {
-            documents: [
-                {
-                    id: "1",
-                    entities: [
-                        {
-                            name: "Seattle",
-                            language: "en",
-                            id: "Seattle",
-                            dataSource: "Wikipedia",
-                            url: "https://en.wikipedia.org/wiki/Seattle",
-                            matches: [{text: "Seattle", offset: 26, length: 7, confidenceScore: 0.15}]
-                        }
-                    ],
-                    warnings: []
-                }
-            ],
-            errors: [],
-            modelVersion: "2021-06-01"
+            body: {
+                documents: [
+                    {
+                        id: "1",
+                        entities: [
+                            {
+                                name: "Seattle",
+                                language: "en",
+                                id: "Seattle",
+                                dataSource: "Wikipedia",
+                                url: "https://en.wikipedia.org/wiki/Seattle",
+                                matches: [{text: "Seattle", offset: 26, length: 7, confidenceScore: 0.15}]
+                            }
+                        ],
+                        warnings: []
+                    }
+                ],
+                errors: [],
+                modelVersion: "2021-06-01"
+            }
         };
     }
 
     # Named Entity Recognition
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + stringIndexType - Method used to interpret string offsets
-    # + payload - Collection of documents to analyze
-    # + return - Recognized entities for each document
-    resource function post entities/recognition/general(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, string stringIndexType = "TextElement_v8") returns EntitiesResult {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + stringIndexType - (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful call results in a list of recognized entities returned for each valid document)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post entities/recognition/general(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, @http:Payload MultiLanguageBatchInput payload, "TextElement_v8"|"UnicodeCodePoint"|"Utf16CodeUnit" stringIndexType = "TextElement_v8") returns EntitiesResultOk|ErrorResponseDefault {
         return {
-            documents: [
-                {
-                    id: "1",
-                    entities: [
-                        {text: "Microsoft", category: "Organization", offset: 0, length: 9, confidenceScore: 0.98},
-                        {text: "Redmond", category: "Location", subcategory: "GPE", offset: 30, length: 7, confidenceScore: 0.93}
-                    ],
-                    warnings: []
-                }
-            ],
-            errors: [],
-            modelVersion: "2021-06-01"
+            body: {
+                documents: [
+                    {
+                        id: "1",
+                        entities: [
+                            {text: "Microsoft", category: "Organization", offset: 0, length: 9, confidenceScore: 0.98},
+                            {text: "Redmond", category: "Location", subcategory: "GPE", offset: 30, length: 7, confidenceScore: 0.93}
+                        ],
+                        warnings: []
+                    }
+                ],
+                errors: [],
+                modelVersion: "2021-06-01"
+            }
         };
     }
 
     # Entities containing personal information
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + domain - PII domain used to limit the entity categories
-    # + piiCategories - PII categories to return
-    # + payload - Collection of documents to analyze
-    # + return - Entities with personal information for each document
-    resource function post entities/recognition/pii(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, string? domain, string[]? piiCategories, string stringIndexType = "TextElement_v8") returns PiiResult {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + domain - (Optional) if specified, will set the PII domain to include only a subset of the entity categories. Possible values include: 'PHI', 'none'
+    # + stringIndexType - (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets
+    # + piiCategories - (Optional) describes the PII categories to return
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful call results in a list of entities containing personal information returned for each valid document)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post entities/recognition/pii(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, string? domain, ("ABARoutingNumber"|"ARNationalIdentityNumber"|"AUBankAccountNumber"|"AUDriversLicenseNumber"|"AUMedicalAccountNumber"|"AUPassportNumber"|"AUTaxFileNumber"|"AUBusinessNumber"|"AUCompanyNumber"|"ATIdentityCard"|"ATTaxIdentificationNumber"|"ATValueAddedTaxNumber"|"AzureDocumentDBAuthKey"|"AzureIAASDatabaseConnectionAndSQLString"|"AzureIoTConnectionString"|"AzurePublishSettingPassword"|"AzureRedisCacheString"|"AzureSAS"|"AzureServiceBusString"|"AzureStorageAccountKey"|"AzureStorageAccountGeneric"|"BENationalNumber"|"BENationalNumberV2"|"BEValueAddedTaxNumber"|"BRCPFNumber"|"BRLegalEntityNumber"|"BRNationalIDRG"|"BGUniformCivilNumber"|"CABankAccountNumber"|"CADriversLicenseNumber"|"CAHealthServiceNumber"|"CAPassportNumber"|"CAPersonalHealthIdentification"|"CASocialInsuranceNumber"|"CLIdentityCardNumber"|"CNResidentIdentityCardNumber"|"CreditCardNumber"|"HRIdentityCardNumber"|"HRNationalIDNumber"|"HRPersonalIdentificationNumber"|"HRPersonalIdentificationOIBNumberV2"|"CYIdentityCard"|"CYTaxIdentificationNumber"|"CZPersonalIdentityNumber"|"CZPersonalIdentityV2"|"DKPersonalIdentificationNumber"|"DKPersonalIdentificationV2"|"DrugEnforcementAgencyNumber"|"EEPersonalIdentificationCode"|"EUDebitCardNumber"|"EUDriversLicenseNumber"|"EUGPSCoordinates"|"EUNationalIdentificationNumber"|"EUPassportNumber"|"EUSocialSecurityNumber"|"EUTaxIdentificationNumber"|"FIEuropeanHealthNumber"|"FINationalID"|"FINationalIDV2"|"FIPassportNumber"|"FRDriversLicenseNumber"|"FRHealthInsuranceNumber"|"FRNationalID"|"FRPassportNumber"|"FRSocialSecurityNumber"|"FRTaxIdentificationNumber"|"FRValueAddedTaxNumber"|"DEDriversLicenseNumber"|"DEPassportNumber"|"DEIdentityCardNumber"|"DETaxIdentificationNumber"|"DEValueAddedNumber"|"GRNationalIDCard"|"GRNationalIDV2"|"GRTaxIdentificationNumber"|"HKIdentityCardNumber"|"HUValueAddedNumber"|"HUPersonalIdentificationNumber"|"HUTaxIdentificationNumber"|"INPermanentAccount"|"INUniqueIdentificationNumber"|"IDIdentityCardNumber"|"InternationalBankingAccountNumber"|"IEPersonalPublicServiceNumber"|"IEPersonalPublicServiceNumberV2"|"ILBankAccountNumber"|"ILNationalID"|"ITDriversLicenseNumber"|"ITFiscalCode"|"ITValueAddedTaxNumber"|"JPBankAccountNumber"|"JPDriversLicenseNumber"|"JPPassportNumber"|"JPResidentRegistrationNumber"|"JPSocialInsuranceNumber"|"JPMyNumberCorporate"|"JPMyNumberPersonal"|"JPResidenceCardNumber"|"LVPersonalCode"|"LTPersonalCode"|"LUNationalIdentificationNumberNatural"|"LUNationalIdentificationNumberNonNatural"|"MYIdentityCardNumber"|"MTIdentityCardNumber"|"MTTaxIDNumber"|"NLCitizensServiceNumber"|"NLCitizensServiceNumberV2"|"NLTaxIdentificationNumber"|"NLValueAddedTaxNumber"|"NZBankAccountNumber"|"NZDriversLicenseNumber"|"NZInlandRevenueNumber"|"NZMinistryOfHealthNumber"|"NZSocialWelfareNumber"|"NOIdentityNumber"|"PHUnifiedMultiPurposeIDNumber"|"PLIdentityCard"|"PLNationalID"|"PLNationalIDV2"|"PLPassportNumber"|"PLTaxIdentificationNumber"|"PLREGONNumber"|"PTCitizenCardNumber"|"PTCitizenCardNumberV2"|"PTTaxIdentificationNumber"|"ROPersonalNumericalCode"|"RUPassportNumberDomestic"|"RUPassportNumberInternational"|"SANationalID"|"SGNationalRegistrationIdentityCardNumber"|"SKPersonalNumber"|"SITaxIdentificationNumber"|"SIUniqueMasterCitizenNumber"|"ZAIdentificationNumber"|"KRResidentRegistrationNumber"|"ESDNI"|"ESSocialSecurityNumber"|"ESTaxIdentificationNumber"|"SQLServerConnectionString"|"SENationalID"|"SENationalIDV2"|"SEPassportNumber"|"SETaxIdentificationNumber"|"SWIFTCode"|"CHSocialSecurityNumber"|"TWNationalID"|"TWPassportNumber"|"TWResidentCertificate"|"THPopulationIdentificationCode"|"TRNationalIdentificationNumber"|"UKDriversLicenseNumber"|"UKElectoralRollNumber"|"UKNationalHealthNumber"|"UKNationalInsuranceNumber"|"UKUniqueTaxpayerNumber"|"USUKPassportNumber"|"USBankAccountNumber"|"USDriversLicenseNumber"|"USIndividualTaxpayerIdentification"|"USSocialSecurityNumber"|"UAPassportNumberDomestic"|"UAPassportNumberInternational"|"Organization"|"Email"|"URL"|"Age"|"PhoneNumber"|"IPAddress"|"Date"|"Person"|"Address"|"All"|"Default")[]? piiCategories, @http:Payload MultiLanguageBatchInput payload, "TextElement_v8"|"UnicodeCodePoint"|"Utf16CodeUnit" stringIndexType = "TextElement_v8") returns PiiResultOk|ErrorResponseDefault {
         return {
-            documents: [
-                {
-                    id: "1",
-                    redactedText: "Call me at ************",
-                    entities: [
-                        {text: "555-0100-123", category: "PhoneNumber", offset: 11, length: 12, confidenceScore: 0.8}
-                    ],
-                    warnings: []
-                }
-            ],
-            errors: [],
-            modelVersion: "2021-01-15"
+            body: {
+                documents: [
+                    {
+                        id: "1",
+                        redactedText: "Call me at ************",
+                        entities: [
+                            {text: "555-0100-123", category: "PhoneNumber", offset: 11, length: 12, confidenceScore: 0.8}
+                        ],
+                        warnings: []
+                    }
+                ],
+                errors: [],
+                modelVersion: "2021-01-15"
+            }
         };
     }
 
     # Key Phrases
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + payload - Collection of documents to analyze
-    # + return - Key phrases for each document
-    resource function post keyPhrases(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut) returns KeyPhraseResult {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful response results in 0 or more key phrases identified in each valid document)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post keyPhrases(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, @http:Payload MultiLanguageBatchInput payload) returns KeyPhraseResultOk|ErrorResponseDefault {
         return {
-            documents: [
-                {id: "1", keyPhrases: ["wonderful hotel", "friendly staff"], warnings: []}
-            ],
-            errors: [],
-            modelVersion: "2021-06-01"
+            body: {
+                documents: [
+                    {id: "1", keyPhrases: ["wonderful hotel", "friendly staff"], warnings: []}
+                ],
+                errors: [],
+                modelVersion: "2021-06-01"
+            }
         };
     }
 
     # Detect Language
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + payload - Collection of documents to analyze for language
-    # + return - Detected language for each document
-    resource function post languages(@http:Payload LanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut) returns LanguageResult {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + payload - Collection of documents to analyze for language endpoint 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful call results in the detected language with the highest probability for each valid document)
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post languages(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, @http:Payload LanguageBatchInput payload) returns LanguageResultOk|ErrorResponseDefault {
         return {
-            documents: [
-                {
-                    id: "1",
-                    detectedLanguage: {name: "English", iso6391Name: "en", confidenceScore: 1.0},
-                    warnings: []
-                }
-            ],
-            errors: [],
-            modelVersion: "2021-01-05"
+            body: {
+                documents: [
+                    {
+                        id: "1",
+                        detectedLanguage: {name: "English", iso6391Name: "en", confidenceScore: 1.0},
+                        warnings: []
+                    }
+                ],
+                errors: [],
+                modelVersion: "2021-01-05"
+            }
         };
     }
 
     # Sentiment
     #
-    # + modelVersion - Model version used for scoring
-    # + showStats - Include request and document level statistics
-    # + loggingOptOut - Opt out of input text logging
-    # + opinionMining - Include opinion mining results
-    # + stringIndexType - Method used to interpret string offsets
-    # + payload - Collection of documents to analyze
-    # + return - Sentiment prediction for each document
-    resource function post sentiment(@http:Payload MultiLanguageBatchInput payload, @http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, boolean? opinionMining, string stringIndexType = "TextElement_v8") returns SentimentResponse {
+    # + modelVersion - (Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. 
+    # + showStats - (Optional) if set to true, response will contain request and document level statistics
+    # + loggingOptOut - (Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai
+    # + opinionMining - (Optional) if set to true, response will contain not only sentiment prediction but also opinion mining (aspect-based sentiment analysis) results
+    # + stringIndexType - (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets
+    # + payload - Collection of documents to analyze 
+    # + return - returns can be any of following types 
+    # http:Ok (A successful call results in a document sentiment prediction, as well as sentiment scores for each sentiment class (Positive, Negative, and Neutral))
+    # http:DefaultStatusCodeResponse (Unexpected error)
+    resource function post sentiment(@http:Query {name: "model-version"} string? modelVersion, boolean? showStats, boolean? loggingOptOut, boolean? opinionMining, @http:Payload MultiLanguageBatchInput payload, "TextElement_v8"|"UnicodeCodePoint"|"Utf16CodeUnit" stringIndexType = "TextElement_v8") returns SentimentResponseOk|ErrorResponseDefault {
         return {
-            documents: [
-                {
-                    id: "1",
-                    sentiment: "positive",
-                    confidenceScores: {positive: 0.98, neutral: 0.01, negative: 0.01},
-                    sentences: [
-                        {
-                            text: "The food was delicious.",
-                            sentiment: "positive",
-                            offset: 0,
-                            length: 23,
-                            confidenceScores: {positive: 0.98, neutral: 0.01, negative: 0.01}
-                        }
-                    ],
-                    warnings: []
-                }
-            ],
-            errors: [],
-            modelVersion: "2020-04-01"
+            body: {
+                documents: [
+                    {
+                        id: "1",
+                        sentiment: "positive",
+                        confidenceScores: {positive: 0.98, neutral: 0.01, negative: 0.01},
+                        sentences: [
+                            {
+                                text: "The food was delicious.",
+                                sentiment: "positive",
+                                offset: 0,
+                                length: 23,
+                                confidenceScores: {positive: 0.98, neutral: 0.01, negative: 0.01}
+                            }
+                        ],
+                        warnings: []
+                    }
+                ],
+                errors: [],
+                modelVersion: "2020-04-01"
+            }
         };
     }
 }
+
+// Service-mode response types. `bal openapi --mode client` collapses 4XX/5XX
+// to `error` and never emits these, so they are defined here for the mock only.
+public type AnydataAccepted record {|
+    *http:Accepted;
+    anydata body;
+    record {|string Operation\-Location?;|} headers;
+|};
+
+public type AnydataDefault record {|
+    *http:DefaultStatusCodeResponse;
+    anydata body;
+|};
+
+public type EntitiesResultOk record {|
+    *http:Ok;
+    EntitiesResult body;
+|};
+
+public type EntityLinkingResultOk record {|
+    *http:Ok;
+    EntityLinkingResult body;
+|};
+
+public type ErrorResponseDefault record {|
+    *http:DefaultStatusCodeResponse;
+    ErrorResponse body;
+|};
+
+public type KeyPhraseResultOk record {|
+    *http:Ok;
+    KeyPhraseResult body;
+|};
+
+public type LanguageResultOk record {|
+    *http:Ok;
+    LanguageResult body;
+|};
+
+public type PiiResultOk record {|
+    *http:Ok;
+    PiiResult body;
+|};
+
+public type SentimentResponseOk record {|
+    *http:Ok;
+    SentimentResponse body;
+|};
+
+public type ErrorResponse record {
+    TextAnalyticsError 'error;
+};

@@ -81,8 +81,8 @@ public type TasksStateTasksSentimentAnalysisTasks record {
 };
 
 public type InnerError record {
-    # Error code
-    "InvalidParameterValue"|"InvalidRequestBodyFormat"|"EmptyRequest"|"MissingInputRecords"|"InvalidDocument"|"ModelVersionIncorrect"|"InvalidDocumentBatch"|"UnsupportedLanguageCode"|"InvalidCountryHint" code;
+    # Error code. Known values: InvalidParameterValue, InvalidRequestBodyFormat, EmptyRequest, MissingInputRecords, InvalidDocument, ModelVersionIncorrect, InvalidDocumentBatch, UnsupportedLanguageCode, InvalidCountryHint
+    string code;
     InnerError innererror?;
     # Error details
     record {|string...;|} details?;
@@ -319,15 +319,15 @@ public type HealthcareEntityProperties record {
     int:Signed32 length;
     # Entity text as appears in the request
     string text;
-    # Healthcare Entity Category
-    "BodyStructure"|"Age"|"Gender"|"ExaminationName"|"Date"|"Direction"|"Frequency"|"MeasurementValue"|"MeasurementUnit"|"RelationalOperator"|"Time"|"GeneOrProtein"|"Variant"|"AdministrativeEvent"|"CareEnvironment"|"HealthcareProfession"|"Diagnosis"|"SymptomOrSign"|"ConditionQualifier"|"MedicationClass"|"MedicationName"|"Dosage"|"MedicationForm"|"MedicationRoute"|"FamilyRelation"|"TreatmentName" category;
+    # Healthcare Entity Category. Known values: BodyStructure, Age, Gender, ExaminationName, Date, Direction, Frequency, MeasurementValue, MeasurementUnit, RelationalOperator, Time, GeneOrProtein, Variant, AdministrativeEvent, CareEnvironment, HealthcareProfession, Diagnosis, SymptomOrSign, ConditionQualifier, MedicationClass, MedicationName, Dosage, MedicationForm, MedicationRoute, FamilyRelation, TreatmentName
+    string category;
     # (Optional) Entity sub type
     string subcategory?;
 };
 
 public type TextAnalyticsError record {
-    # Error code
-    "InvalidRequest"|"InvalidArgument"|"InternalServerError"|"ServiceUnavailable"|"NotFound" code;
+    # Error code. Known values: InvalidRequest, InvalidArgument, InternalServerError, ServiceUnavailable, NotFound
+    string code;
     InnerError innererror?;
     # Details about specific errors that led to this reported error
     TextAnalyticsError[] details?;
@@ -403,8 +403,8 @@ public type AnalyzeJobState record {
 public type TextAnalyticsWarning record {
     # A JSON pointer reference indicating the target object
     string targetRef?;
-    # Error code
-    "LongWordsInDocument"|"DocumentTruncated" code;
+    # Warning code. Known values: LongWordsInDocument, DocumentTruncated
+    string code;
     # Warning message
     string message;
 };
@@ -526,8 +526,8 @@ public type Match record {
 
 # Every relation is an entity graph of a certain relationType, where all entities are connected and have specific roles within the relation context
 public type HealthcareRelation record {
-    # Type of relation. Examples include: `DosageOfMedication` or 'FrequencyOfMedication', etc
-    "Abbreviation"|"DirectionOfBodyStructure"|"DirectionOfCondition"|"DirectionOfExamination"|"DirectionOfTreatment"|"DosageOfMedication"|"FormOfMedication"|"FrequencyOfMedication"|"FrequencyOfTreatment"|"QualifierOfCondition"|"RelationOfExamination"|"RouteOfMedication"|"TimeOfCondition"|"TimeOfEvent"|"TimeOfExamination"|"TimeOfMedication"|"TimeOfTreatment"|"UnitOfCondition"|"UnitOfExamination"|"ValueOfCondition"|"ValueOfExamination" relationType;
+    # Type of relation. Known values: Abbreviation, DirectionOfBodyStructure, DirectionOfCondition, DirectionOfExamination, DirectionOfTreatment, DosageOfMedication, FormOfMedication, FrequencyOfMedication, FrequencyOfTreatment, QualifierOfCondition, RelationOfExamination, RouteOfMedication, TimeOfCondition, TimeOfEvent, TimeOfExamination, TimeOfMedication, TimeOfTreatment, UnitOfCondition, UnitOfExamination, ValueOfCondition, ValueOfExamination
+    string relationType;
     # The entities in the relation
     HealthcareRelationEntity[] entities;
 };

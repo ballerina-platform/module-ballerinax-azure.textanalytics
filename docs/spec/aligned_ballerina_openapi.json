@@ -54,17 +54,19 @@
                                 }
                             }
                         },
-                        "content": {}
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            },
-                            "text/json": {
+                            "*/*": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
                                 }
@@ -304,17 +306,19 @@
                                 }
                             }
                         },
-                        "content": {}
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            },
-                            "text/json": {
+                            "*/*": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
                                 }
@@ -895,18 +899,7 @@
                 "properties": {
                     "code": {
                         "type": "string",
-                        "description": "Error code",
-                        "enum": [
-                            "InvalidParameterValue",
-                            "InvalidRequestBodyFormat",
-                            "EmptyRequest",
-                            "MissingInputRecords",
-                            "InvalidDocument",
-                            "ModelVersionIncorrect",
-                            "InvalidDocumentBatch",
-                            "UnsupportedLanguageCode",
-                            "InvalidCountryHint"
-                        ],
+                        "description": "Error code. Known values: InvalidParameterValue, InvalidRequestBodyFormat, EmptyRequest, MissingInputRecords, InvalidDocument, ModelVersionIncorrect, InvalidDocumentBatch, UnsupportedLanguageCode, InvalidCountryHint",
                         "x-ms-enum": {
                             "name": "InnerErrorCodeValue",
                             "modelAsString": true
@@ -1569,35 +1562,7 @@
                     },
                     "category": {
                         "type": "string",
-                        "description": "Healthcare Entity Category",
-                        "enum": [
-                            "BodyStructure",
-                            "Age",
-                            "Gender",
-                            "ExaminationName",
-                            "Date",
-                            "Direction",
-                            "Frequency",
-                            "MeasurementValue",
-                            "MeasurementUnit",
-                            "RelationalOperator",
-                            "Time",
-                            "GeneOrProtein",
-                            "Variant",
-                            "AdministrativeEvent",
-                            "CareEnvironment",
-                            "HealthcareProfession",
-                            "Diagnosis",
-                            "SymptomOrSign",
-                            "ConditionQualifier",
-                            "MedicationClass",
-                            "MedicationName",
-                            "Dosage",
-                            "MedicationForm",
-                            "MedicationRoute",
-                            "FamilyRelation",
-                            "TreatmentName"
-                        ],
+                        "description": "Healthcare Entity Category. Known values: BodyStructure, Age, Gender, ExaminationName, Date, Direction, Frequency, MeasurementValue, MeasurementUnit, RelationalOperator, Time, GeneOrProtein, Variant, AdministrativeEvent, CareEnvironment, HealthcareProfession, Diagnosis, SymptomOrSign, ConditionQualifier, MedicationClass, MedicationName, Dosage, MedicationForm, MedicationRoute, FamilyRelation, TreatmentName",
                         "x-ms-enum": {
                             "name": "healthcareEntityCategory",
                             "modelAsString": true
@@ -1634,14 +1599,7 @@
                 "properties": {
                     "code": {
                         "type": "string",
-                        "description": "Error code",
-                        "enum": [
-                            "InvalidRequest",
-                            "InvalidArgument",
-                            "InternalServerError",
-                            "ServiceUnavailable",
-                            "NotFound"
-                        ],
+                        "description": "Error code. Known values: InvalidRequest, InvalidArgument, InternalServerError, ServiceUnavailable, NotFound",
                         "x-ms-enum": {
                             "name": "ErrorCodeValue",
                             "modelAsString": true
@@ -1766,11 +1724,7 @@
                     },
                     "code": {
                         "type": "string",
-                        "description": "Error code",
-                        "enum": [
-                            "LongWordsInDocument",
-                            "DocumentTruncated"
-                        ],
+                        "description": "Warning code. Known values: LongWordsInDocument, DocumentTruncated",
                         "x-ms-enum": {
                             "name": "WarningCodeValue",
                             "modelAsString": true
@@ -2047,30 +2001,7 @@
                 "properties": {
                     "relationType": {
                         "type": "string",
-                        "description": "Type of relation. Examples include: `DosageOfMedication` or 'FrequencyOfMedication', etc",
-                        "enum": [
-                            "Abbreviation",
-                            "DirectionOfBodyStructure",
-                            "DirectionOfCondition",
-                            "DirectionOfExamination",
-                            "DirectionOfTreatment",
-                            "DosageOfMedication",
-                            "FormOfMedication",
-                            "FrequencyOfMedication",
-                            "FrequencyOfTreatment",
-                            "QualifierOfCondition",
-                            "RelationOfExamination",
-                            "RouteOfMedication",
-                            "TimeOfCondition",
-                            "TimeOfEvent",
-                            "TimeOfExamination",
-                            "TimeOfMedication",
-                            "TimeOfTreatment",
-                            "UnitOfCondition",
-                            "UnitOfExamination",
-                            "ValueOfCondition",
-                            "ValueOfExamination"
-                        ],
+                        "description": "Type of relation. Known values: Abbreviation, DirectionOfBodyStructure, DirectionOfCondition, DirectionOfExamination, DirectionOfTreatment, DosageOfMedication, FormOfMedication, FrequencyOfMedication, FrequencyOfTreatment, QualifierOfCondition, RelationOfExamination, RouteOfMedication, TimeOfCondition, TimeOfEvent, TimeOfExamination, TimeOfMedication, TimeOfTreatment, UnitOfCondition, UnitOfExamination, ValueOfCondition, ValueOfExamination",
                         "x-ms-enum": {
                             "name": "relationType",
                             "modelAsString": true

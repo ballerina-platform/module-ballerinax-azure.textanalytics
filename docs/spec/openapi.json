@@ -51,8 +51,7 @@
           "text/json"
         ],
         "produces": [
-          "application/json",
-          "text/json"
+          "*/*"
         ],
         "description": "Submit a collection of text documents for analysis. Specify one or more unique tasks to be executed.",
         "operationId": "Analyze",
@@ -70,6 +69,9 @@
         "responses": {
           "202": {
             "description": "A successful call results with an Operation-Location header used to check the status of the analysis job.",
+            "schema": {
+              "type": "file"
+            },
             "headers": {
               "Operation-Location": {
                 "type": "string"
@@ -231,8 +233,7 @@
           "text/json"
         ],
         "produces": [
-          "application/json",
-          "text/json"
+          "*/*"
         ],
         "parameters": [
           {
@@ -251,6 +252,9 @@
         "responses": {
           "202": {
             "description": "Accepted - call results in a link where the status of the submitted job can be checked via the GET operation.",
+            "schema": {
+              "type": "file"
+            },
             "headers": {
               "Operation-Location": {
                 "type": "string"
@@ -683,18 +687,11 @@
       "properties": {
         "code": {
           "type": "string",
-          "enum": [
-            "InvalidRequest",
-            "InvalidArgument",
-            "InternalServerError",
-            "ServiceUnavailable",
-            "NotFound"
-          ],
           "x-ms-enum": {
             "name": "ErrorCodeValue",
             "modelAsString": true
           },
-          "description": "Error code."
+          "description": "Error code. Known values: InvalidRequest, InvalidArgument, InternalServerError, ServiceUnavailable, NotFound."
         },
         "message": {
           "type": "string",
@@ -726,15 +723,11 @@
       "properties": {
         "code": {
           "type": "string",
-          "enum": [
-            "LongWordsInDocument",
-            "DocumentTruncated"
-          ],
           "x-ms-enum": {
             "name": "WarningCodeValue",
             "modelAsString": true
           },
-          "description": "Error code."
+          "description": "Warning code. Known values: LongWordsInDocument, DocumentTruncated."
         },
         "message": {
           "type": "string",
@@ -842,22 +835,11 @@
       "properties": {
         "code": {
           "type": "string",
-          "enum": [
-            "InvalidParameterValue",
-            "InvalidRequestBodyFormat",
-            "EmptyRequest",
-            "MissingInputRecords",
-            "InvalidDocument",
-            "ModelVersionIncorrect",
-            "InvalidDocumentBatch",
-            "UnsupportedLanguageCode",
-            "InvalidCountryHint"
-          ],
           "x-ms-enum": {
             "name": "InnerErrorCodeValue",
             "modelAsString": true
           },
-          "description": "Error code."
+          "description": "Error code. Known values: InvalidParameterValue, InvalidRequestBodyFormat, EmptyRequest, MissingInputRecords, InvalidDocument, ModelVersionIncorrect, InvalidDocumentBatch, UnsupportedLanguageCode, InvalidCountryHint."
         },
         "message": {
           "type": "string",
@@ -1704,31 +1686,8 @@
       ],
       "properties": {
         "relationType": {
-          "description": "Type of relation. Examples include: `DosageOfMedication` or 'FrequencyOfMedication', etc.",
+          "description": "Type of relation. Known values: Abbreviation, DirectionOfBodyStructure, DirectionOfCondition, DirectionOfExamination, DirectionOfTreatment, DosageOfMedication, FormOfMedication, FrequencyOfMedication, FrequencyOfTreatment, QualifierOfCondition, RelationOfExamination, RouteOfMedication, TimeOfCondition, TimeOfEvent, TimeOfExamination, TimeOfMedication, TimeOfTreatment, UnitOfCondition, UnitOfExamination, ValueOfCondition, ValueOfExamination.",
           "type": "string",
-          "enum": [
-            "Abbreviation",
-            "DirectionOfBodyStructure",
-            "DirectionOfCondition",
-            "DirectionOfExamination",
-            "DirectionOfTreatment",
-            "DosageOfMedication",
-            "FormOfMedication",
-            "FrequencyOfMedication",
-            "FrequencyOfTreatment",
-            "QualifierOfCondition",
-            "RelationOfExamination",
-            "RouteOfMedication",
-            "TimeOfCondition",
-            "TimeOfEvent",
-            "TimeOfExamination",
-            "TimeOfMedication",
-            "TimeOfTreatment",
-            "UnitOfCondition",
-            "UnitOfExamination",
-            "ValueOfCondition",
-            "ValueOfExamination"
-          ],
           "x-ms-enum": {
             "name": "relationType",
             "modelAsString": true
@@ -1841,35 +1800,7 @@
             "modelAsString": true
           },
           "type": "string",
-          "description": "Healthcare Entity Category.",
-          "enum": [
-            "BodyStructure",
-            "Age",
-            "Gender",
-            "ExaminationName",
-            "Date",
-            "Direction",
-            "Frequency",
-            "MeasurementValue",
-            "MeasurementUnit",
-            "RelationalOperator",
-            "Time",
-            "GeneOrProtein",
-            "Variant",
-            "AdministrativeEvent",
-            "CareEnvironment",
-            "HealthcareProfession",
-            "Diagnosis",
-            "SymptomOrSign",
-            "ConditionQualifier",
-            "MedicationClass",
-            "MedicationName",
-            "Dosage",
-            "MedicationForm",
-            "MedicationRoute",
-            "FamilyRelation",
-            "TreatmentName"
-          ]
+          "description": "Healthcare Entity Category. Known values: BodyStructure, Age, Gender, ExaminationName, Date, Direction, Frequency, MeasurementValue, MeasurementUnit, RelationalOperator, Time, GeneOrProtein, Variant, AdministrativeEvent, CareEnvironment, HealthcareProfession, Diagnosis, SymptomOrSign, ConditionQualifier, MedicationClass, MedicationName, Dosage, MedicationForm, MedicationRoute, FamilyRelation, TreatmentName."
         },
         "subcategory": {
           "type": "string",

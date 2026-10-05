@@ -41,7 +41,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Collection of documents to analyze and tasks to execute 
     # + return - A successful call results with an Operation-Location header used to check the status of the analysis job 
-    remote isolated function submitAnalysisJob(AnalyzeBatchInput payload, map<string|string[]> headers = {}) returns error? {
+    remote isolated function submitAnalysisJob(AnalyzeBatchInput payload, map<string|string[]> headers = {}) returns http:Response|error {
         string resourcePath = string `/analyze`;
         map<anydata> headerValues = {...headers};
         headerValues["Ocp-Apim-Subscription-Key"] = self.apiKeyConfig.ocpApimSubscriptionKey;
@@ -101,7 +101,7 @@ public isolated client class Client {
     # + queries - Queries to be sent with the request 
     # + payload - Collection of documents to analyze 
     # + return - Accepted - call results in a link where the status of the submitted job can be checked via the GET operation 
-    remote isolated function submitHealthcareJob(MultiLanguageBatchInput payload, map<string|string[]> headers = {}, *SubmitHealthcareJobQueries queries) returns error? {
+    remote isolated function submitHealthcareJob(MultiLanguageBatchInput payload, map<string|string[]> headers = {}, *SubmitHealthcareJobQueries queries) returns http:Response|error {
         string resourcePath = string `/entities/health/jobs`;
         resourcePath = resourcePath + check getPathForQueryParam(queries);
         map<anydata> headerValues = {...headers};

@@ -15,6 +15,7 @@
 // under the License.
 
 
+import ballerina/http;
 import ballerina/os;
 import ballerina/test;
 
@@ -27,6 +28,12 @@ final Client textAnalytics = check new ({ocpApimSubscriptionKey: subscriptionKey
 final MultiLanguageBatchInput multiLanguageInput = {
     documents: [{id: "1", language: "en", text: "Microsoft was founded by Bill Gates in Albuquerque."}]
 };
+
+// Extracts the job ID, the last path segment of the Operation-Location header, from a job submission response.
+function extractJobId(http:Response response) returns string|error {
+    string location = check response.getHeader("Operation-Location");
+    return location.substring(<int>location.lastIndexOf("/") + 1);
+}
 
 @test:Config {groups: ["live_tests", "mock_tests"]}
 function testRecognizeEntities() returns error? {
@@ -66,12 +73,28 @@ function testAnalyzeSentiment() returns error? {
 
 @test:Config {groups: ["mock_tests"]}
 function testSubmitAnalysisJob() returns error? {
-    error? response = textAnalytics->submitAnalysisJob({
+    http:Response response = check textAnalytics->submitAnalysisJob({
         displayName: "Contoso analysis",
         analysisInput: multiLanguageInput,
         tasks: {keyPhraseExtractionTasks: [{}]}
     });
-    test:assertTrue(response is ());
+    test:assertEquals(response.statusCode, 202);
+    string jobId = check extractJobId(response);
+    test:assertTrue(jobId.length() > 0);
+    test:assertTrue(check response.getHeader("Operation-Location") is string);
+}
+
+@test:Config {groups: ["mock_tests"]}
+function testSubmitAndGetAnalysisJob() returns error? {
+    http:Response submitted = check textAnalytics->submitAnalysisJob({
+        displayName: "Contoso analysis",
+        analysisInput: multiLanguageInput,
+        tasks: {keyPhraseExtractionTasks: [{}]}
+    });
+    string jobId = check extractJobId(submitted);
+    AnalyzeJobState response = check textAnalytics->getAnalysisJob(jobId);
+    test:assertEquals(response.jobId, jobId);
+    test:assertEquals(response.status, "succeeded");
 }
 
 @test:Config {groups: ["mock_tests"]}
@@ -82,8 +105,19 @@ function testGetAnalysisJob() returns error? {
 
 @test:Config {groups: ["mock_tests"]}
 function testSubmitHealthcareJob() returns error? {
-    error? response = textAnalytics->submitHealthcareJob(multiLanguageInput);
-    test:assertTrue(response is ());
+    http:Response response = check textAnalytics->submitHealthcareJob(multiLanguageInput);
+    test:assertEquals(response.statusCode, 202);
+    string jobId = check extractJobId(response);
+    test:assertTrue(jobId.length() > 0);
+}
+
+@test:Config {groups: ["mock_tests"]}
+function testSubmitAndGetHealthcareJob() returns error? {
+    http:Response submitted = check textAnalytics->submitHealthcareJob(multiLanguageInput);
+    string jobId = check extractJobId(submitted);
+    HealthcareJobState response = check textAnalytics->getHealthcareJob(jobId);
+    test:assertEquals(response.jobId, jobId);
+    test:assertEquals(response.status, "succeeded");
 }
 
 @test:Config {groups: ["mock_tests"]}

@@ -27,6 +27,12 @@ These changes are done in order to improve the overall usability, and as workaro
 
 6. Replaced the PascalCase operation IDs with intent-revealing camelCase names, persisted in `ai-mappings.json`: `submitAnalysisJob`, `getAnalysisJob`, `submitHealthcareJob`, `getHealthcareJob`, `cancelHealthcareJob`, `recognizeEntities`, `recognizePiiEntities`, `linkEntities`, `extractKeyPhrases`, `detectLanguage` and `analyzeSentiment`.
 
+7. Made the 202 job-submission responses of `POST /analyze` (`submitAnalysisJob`) and `POST /entities/health/jobs` (`submitHealthcareJob`) return `http:Response` so callers can read the `Operation-Location` header and recover the job ID. Both responses declare only that header and no body, which the generator maps to `error?`, discarding the header. In the original specification, both operations now declare `produces: ["*/*"]` (was `application/json`, `text/json`) and their `202` response gets `schema: {type: file}`; the generator then emits a `*/*` binary response and the methods return `http:Response|error`. The `default` error response is unchanged.
+
+   Updated: `/analyze` and `/entities/health/jobs` POST: `produces: ["*/*"]`, `responses.202.schema: {type: file}`
+
+8. Removed the `enum` constraint from the open-ended (`x-ms-enum` with `modelAsString: true`) properties `HealthcareEntityProperties.category`, `HealthcareRelation.relationType`, `TextAnalyticsError.code`, `InnerError.code` and `TextAnalyticsWarning.code` in the original specification, so they are generated as `string` and values the service adds later still bind. The known values are listed in each property description as `Known values: ...`. Other enums, including the closed `TargetRelationType` and `StringIndexType`, are unchanged. The description of `TextAnalyticsWarning.code` was also corrected from "Error code" to "Warning code".
+
 ## OpenAPI cli command
 
 The following command was used to generate the Ballerina client from the OpenAPI specification. The command should be executed from the repository root directory.
@@ -35,4 +41,4 @@ The following command was used to generate the Ballerina client from the OpenAPI
 bal openapi -i docs/spec/aligned_ballerina_openapi.json -o ballerina --mode client --client-methods remote --license docs/license.txt
 ```
 
-Note: The license year is hardcoded to 2026, change if necessary.
+Note: The license year is hardcoded to 2024, change if necessary.
