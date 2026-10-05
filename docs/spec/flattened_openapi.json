@@ -1,0 +1,2338 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Text Analytics Client",
+    "description" : "The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in <a href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>",
+    "contact" : {
+      "name" : "Microsoft Cognitive Services",
+      "url" : "https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/",
+      "email" : "mlapi@microsoft.com"
+    },
+    "version" : "v3.1"
+  },
+  "security" : [ {
+    "apim_key" : [ ]
+  } ],
+  "paths" : {
+    "/analyze" : {
+      "post" : {
+        "summary" : "Submit analysis job",
+        "description" : "Submit a collection of text documents for analysis. Specify one or more unique tasks to be executed.",
+        "operationId" : "Analyze",
+        "requestBody" : {
+          "description" : "Collection of documents to analyze and tasks to execute.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnalyzeBatchInput"
+              }
+            },
+            "text/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnalyzeBatchInput"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "202" : {
+            "description" : "A successful call results with an Operation-Location header used to check the status of the analysis job.",
+            "headers" : {
+              "Operation-Location" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : { }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "x-ms-long-running-operation" : true,
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/analyze/jobs/{jobId}" : {
+      "get" : {
+        "summary" : "Get analysis status and results",
+        "description" : "Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are completed, the job will transition to the completed state and results will be available for each task.",
+        "operationId" : "AnalyzeStatus",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/AnalyzeJobId"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "name" : "$top",
+          "in" : "query",
+          "description" : "(Optional) Set the maximum number of results per task. When both $top and $skip are specified, $skip is applied first.",
+          "schema" : {
+            "maximum" : 50,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 20
+          }
+        }, {
+          "name" : "$skip",
+          "in" : "query",
+          "description" : "(Optional) Set the number of elements to offset in the response. When both $top and $skip are specified, $skip is applied first.",
+          "schema" : {
+            "minimum" : 0,
+            "type" : "integer",
+            "default" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Analysis job status and metadata.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnalyzeJobState"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnalyzeJobState"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/entities/health/jobs/{jobId}" : {
+      "get" : {
+        "summary" : "Get healthcare analysis job status and results",
+        "description" : "Get details of the healthcare prediction job specified by the jobId.",
+        "operationId" : "HealthStatus",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/JobId"
+        }, {
+          "name" : "$top",
+          "in" : "query",
+          "description" : "(Optional) Set the maximum number of results per task. When both $top and $skip are specified, $skip is applied first.",
+          "schema" : {
+            "maximum" : 50,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 20
+          }
+        }, {
+          "name" : "$skip",
+          "in" : "query",
+          "description" : "(Optional) Set the number of elements to offset in the response. When both $top and $skip are specified, $skip is applied first.",
+          "schema" : {
+            "minimum" : 0,
+            "type" : "integer",
+            "default" : 0
+          }
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HealthcareJobState"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HealthcareJobState"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      },
+      "delete" : {
+        "summary" : "Cancel healthcare prediction job",
+        "description" : "Cancel healthcare prediction job.",
+        "operationId" : "CancelHealthJob",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/JobId"
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Cancel Job request has been received.",
+            "headers" : {
+              "Operation-Location" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : { }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "x-ms-long-running-operation" : true
+      }
+    },
+    "/entities/health/jobs" : {
+      "post" : {
+        "summary" : "Submit healthcare analysis job",
+        "description" : "Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions, symptoms, etc) and their relations.",
+        "operationId" : "Health",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/StringIndexType"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted - call results in a link where the status of the submitted job can be checked via the GET operation.",
+            "headers" : {
+              "Operation-Location" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : { }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "x-ms-long-running-operation" : true
+      }
+    },
+    "/entities/recognition/general" : {
+      "post" : {
+        "summary" : "Named Entity Recognition",
+        "description" : "The API returns a list of general named entities in a given document. For the list of supported entity types, check <a href=\"https://aka.ms/taner\">Supported Entity Types in Text Analytics API</a>. See the <a href=\"https://aka.ms/talangs\">Supported languages in Text Analytics API</a> for the list of enabled languages.",
+        "operationId" : "EntitiesRecognitionGeneral",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        }, {
+          "$ref" : "#/components/parameters/StringIndexType"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful call results in a list of recognized entities returned for each valid document.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntitiesResult"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntitiesResult"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/entities/recognition/pii" : {
+      "post" : {
+        "summary" : "Entities containing personal information",
+        "description" : "The API returns a list of entities with personal information (\\\"SSN\\\", \\\"Bank Account\\\" etc) in the document. For the list of supported entity types, check <a href=\"https://aka.ms/tanerpii\">Supported Entity Types in Text Analytics API</a>. See the <a href=\"https://aka.ms/talangs\">Supported languages in Text Analytics API</a> for the list of enabled languages.\n",
+        "operationId" : "EntitiesRecognitionPii",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        }, {
+          "name" : "domain",
+          "in" : "query",
+          "description" : "(Optional) if specified, will set the PII domain to include only a subset of the entity categories. Possible values include: 'PHI', 'none'.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "$ref" : "#/components/parameters/StringIndexType"
+        }, {
+          "$ref" : "#/components/parameters/PiiCategories"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful call results in a list of entities containing personal information returned for each valid document",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PiiResult"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PiiResult"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/entities/linking" : {
+      "post" : {
+        "summary" : "Linked entities from a well known knowledge base",
+        "description" : "The API returns a list of recognized entities with links to a well known knowledge base. See the <a href=\"https://aka.ms/talangs\">Supported languages in Text Analytics API</a> for the list of enabled languages.",
+        "operationId" : "EntitiesLinking",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        }, {
+          "$ref" : "#/components/parameters/StringIndexType"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful call results in a list of recognized entities with links to a well known knowledge base returned for each valid document",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntityLinkingResult"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntityLinkingResult"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/keyPhrases" : {
+      "post" : {
+        "summary" : "Key Phrases",
+        "description" : "The API returns a list of strings denoting the key phrases in the input text. See the <a href=\"https://aka.ms/talangs\">Supported languages in Text Analytics API</a> for the list of enabled languages.",
+        "operationId" : "KeyPhrases",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful response results in 0 or more key phrases identified in each valid document",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/KeyPhraseResult"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/KeyPhraseResult"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/languages" : {
+      "post" : {
+        "summary" : "Detect Language",
+        "description" : "The API returns the detected language and a numeric score between 0 and 1. Scores close to 1 indicate 100% certainty that the identified language is true. See the <a href=\"https://aka.ms/talangs\">Supported languages in Text Analytics API</a> for the list of enabled languages.",
+        "operationId" : "Languages",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/LanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful call results in the detected language with the highest probability for each valid document",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LanguageResult"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LanguageResult"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sentiment" : {
+      "post" : {
+        "summary" : "Sentiment",
+        "description" : "The API returns a detailed sentiment analysis for the input text. The analysis is done in multiple levels of granularity, start from the a document level, down to sentence and key terms (targets and assessments).",
+        "operationId" : "Sentiment",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/ModelVersion"
+        }, {
+          "$ref" : "#/components/parameters/ShowStats"
+        }, {
+          "$ref" : "#/components/parameters/LoggingOptOut"
+        }, {
+          "name" : "opinionMining",
+          "in" : "query",
+          "description" : "(Optional) if set to true, response will contain not only sentiment prediction but also opinion mining (aspect-based sentiment analysis) results.",
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "$ref" : "#/components/parameters/StringIndexType"
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/MultiLanguageInput"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "A successful call results in a document sentiment prediction, as well as sentiment scores for each sentiment class (Positive, Negative, and Neutral)",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SentimentResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SentimentResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              },
+              "text/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "JobManifest" : {
+        "required" : [ "tasks" ],
+        "type" : "object",
+        "properties" : {
+          "tasks" : {
+            "$ref" : "#/components/schemas/JobManifestTasks"
+          }
+        }
+      },
+      "MultiLanguageBatchInput" : {
+        "required" : [ "documents" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "The set of documents to process as part of this batch.",
+            "items" : {
+              "$ref" : "#/components/schemas/MultiLanguageInput"
+            }
+          }
+        },
+        "description" : "Contains a set of input documents to be analyzed by the service."
+      },
+      "MultiLanguageInput" : {
+        "required" : [ "id", "text" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "A unique, non-empty document identifier."
+          },
+          "text" : {
+            "type" : "string",
+            "description" : "The input text to process."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "(Optional) This is the 2 letter ISO 639-1 representation of a language. For example, use \"en\" for English; \"es\" for Spanish etc. If not set, use \"en\" for English as default."
+          }
+        },
+        "description" : "Contains an input document to be analyzed by the service."
+      },
+      "DocumentError" : {
+        "required" : [ "error", "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Document Id."
+          },
+          "error" : {
+            "$ref" : "#/components/schemas/TextAnalyticsError"
+          }
+        }
+      },
+      "ErrorResponse" : {
+        "required" : [ "error" ],
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "$ref" : "#/components/schemas/TextAnalyticsError"
+          }
+        }
+      },
+      "TextAnalyticsError" : {
+        "required" : [ "code", "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "Error code.",
+            "enum" : [ "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable", "NotFound" ],
+            "x-ms-enum" : {
+              "name" : "ErrorCodeValue",
+              "modelAsString" : true
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message."
+          },
+          "target" : {
+            "type" : "string",
+            "description" : "Error target."
+          },
+          "innererror" : {
+            "$ref" : "#/components/schemas/InnerError"
+          },
+          "details" : {
+            "type" : "array",
+            "description" : "Details about specific errors that led to this reported error.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsError"
+            }
+          }
+        }
+      },
+      "TextAnalyticsWarning" : {
+        "required" : [ "code", "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "Error code.",
+            "enum" : [ "LongWordsInDocument", "DocumentTruncated" ],
+            "x-ms-enum" : {
+              "name" : "WarningCodeValue",
+              "modelAsString" : true
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Warning message."
+          },
+          "targetRef" : {
+            "type" : "string",
+            "description" : "A JSON pointer reference indicating the target object."
+          }
+        }
+      },
+      "PiiTask" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "$ref" : "#/components/schemas/PiiTaskParameters"
+          },
+          "taskName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "EntitiesTask" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "$ref" : "#/components/schemas/EntitiesTaskParameters"
+          },
+          "taskName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SentimentAnalysisTask" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "$ref" : "#/components/schemas/SentimentAnalysisTaskParameters"
+          },
+          "taskName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "InnerError" : {
+        "required" : [ "code", "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "Error code.",
+            "enum" : [ "InvalidParameterValue", "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputRecords", "InvalidDocument", "ModelVersionIncorrect", "InvalidDocumentBatch", "UnsupportedLanguageCode", "InvalidCountryHint" ],
+            "x-ms-enum" : {
+              "name" : "InnerErrorCodeValue",
+              "modelAsString" : true
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message."
+          },
+          "details" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Error details."
+          },
+          "target" : {
+            "type" : "string",
+            "description" : "Error target."
+          },
+          "innererror" : {
+            "$ref" : "#/components/schemas/InnerError"
+          }
+        }
+      },
+      "AnalyzeBatchInput" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/JobDescriptor"
+        }, {
+          "$ref" : "#/components/schemas/AnalysisInput"
+        }, {
+          "$ref" : "#/components/schemas/JobManifest"
+        } ]
+      },
+      "AnalyzeJobState" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/AnalyzeJobMetadata"
+        }, {
+          "$ref" : "#/components/schemas/TasksState"
+        }, {
+          "$ref" : "#/components/schemas/AnalyzeJobErrorsAndStatistics"
+        }, {
+          "$ref" : "#/components/schemas/Pagination"
+        } ]
+      },
+      "SentimentResponse" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Sentiment analysis per document.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentSentiment"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "TaskState" : {
+        "required" : [ "lastUpdateDateTime", "status", "taskName" ],
+        "type" : "object",
+        "properties" : {
+          "lastUpdateDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "taskName" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "notStarted", "running", "succeeded", "failed", "rejected", "cancelled", "cancelling" ],
+            "x-ms-enum" : {
+              "modelAsString" : false,
+              "name" : "State"
+            }
+          }
+        }
+      },
+      "TasksState" : {
+        "required" : [ "tasks" ],
+        "type" : "object",
+        "properties" : {
+          "tasks" : {
+            "$ref" : "#/components/schemas/TasksStateTasks"
+          }
+        }
+      },
+      "DocumentSentiment" : {
+        "required" : [ "confidenceScores", "id", "sentences", "sentiment", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "sentiment" : {
+            "type" : "string",
+            "description" : "Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).",
+            "enum" : [ "positive", "neutral", "negative", "mixed" ],
+            "x-ms-enum" : {
+              "name" : "DocumentSentimentValue",
+              "modelAsString" : false
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          },
+          "confidenceScores" : {
+            "$ref" : "#/components/schemas/SentimentConfidenceScorePerLabel"
+          },
+          "sentences" : {
+            "type" : "array",
+            "description" : "Sentence level sentiment analysis.",
+            "items" : {
+              "$ref" : "#/components/schemas/SentenceSentiment"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          }
+        }
+      },
+      "RequestStatistics" : {
+        "required" : [ "documentsCount", "erroneousDocumentsCount", "transactionsCount", "validDocumentsCount" ],
+        "type" : "object",
+        "properties" : {
+          "documentsCount" : {
+            "type" : "integer",
+            "description" : "Number of documents submitted in the request.",
+            "format" : "int32"
+          },
+          "validDocumentsCount" : {
+            "type" : "integer",
+            "description" : "Number of valid documents. This excludes empty, over-size limit or non-supported languages documents.",
+            "format" : "int32"
+          },
+          "erroneousDocumentsCount" : {
+            "type" : "integer",
+            "description" : "Number of invalid documents. This includes empty, over-size limit or non-supported languages documents.",
+            "format" : "int32"
+          },
+          "transactionsCount" : {
+            "type" : "integer",
+            "description" : "Number of transactions for the request.",
+            "format" : "int64"
+          }
+        },
+        "description" : "if showStats=true was specified in the request this field will contain information about the request payload."
+      },
+      "DocumentStatistics" : {
+        "required" : [ "charactersCount", "transactionsCount" ],
+        "type" : "object",
+        "properties" : {
+          "charactersCount" : {
+            "type" : "integer",
+            "description" : "Number of text elements recognized in the document.",
+            "format" : "int32"
+          },
+          "transactionsCount" : {
+            "type" : "integer",
+            "description" : "Number of transactions for the document.",
+            "format" : "int32"
+          }
+        },
+        "description" : "if showStats=true was specified in the request this field will contain information about the document payload."
+      },
+      "SentimentConfidenceScorePerLabel" : {
+        "required" : [ "negative", "neutral", "positive" ],
+        "type" : "object",
+        "properties" : {
+          "positive" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "neutral" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "negative" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        },
+        "description" : "Represents the confidence scores between 0 and 1 across all sentiment classes: positive, neutral, negative."
+      },
+      "SentenceSentiment" : {
+        "required" : [ "confidenceScores", "length", "offset", "sentiment", "text" ],
+        "type" : "object",
+        "properties" : {
+          "text" : {
+            "type" : "string",
+            "description" : "The sentence text."
+          },
+          "sentiment" : {
+            "type" : "string",
+            "description" : "The predicted Sentiment for the sentence.",
+            "enum" : [ "positive", "neutral", "negative" ],
+            "x-ms-enum" : {
+              "name" : "SentenceSentimentValue",
+              "modelAsString" : false
+            }
+          },
+          "confidenceScores" : {
+            "$ref" : "#/components/schemas/SentimentConfidenceScorePerLabel"
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "The sentence offset from the start of the document.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "The length of the sentence.",
+            "format" : "int32"
+          },
+          "targets" : {
+            "type" : "array",
+            "description" : "The array of sentence targets for the sentence.",
+            "items" : {
+              "$ref" : "#/components/schemas/SentenceTarget"
+            }
+          },
+          "assessments" : {
+            "type" : "array",
+            "description" : "The array of assessments for the sentence.",
+            "items" : {
+              "$ref" : "#/components/schemas/SentenceAssessment"
+            }
+          }
+        }
+      },
+      "SentenceTarget" : {
+        "required" : [ "confidenceScores", "length", "offset", "relations", "sentiment", "text" ],
+        "type" : "object",
+        "properties" : {
+          "sentiment" : {
+            "type" : "string",
+            "description" : "Targeted sentiment in the sentence.",
+            "enum" : [ "positive", "mixed", "negative" ],
+            "x-ms-enum" : {
+              "name" : "TokenSentimentValue",
+              "modelAsString" : false
+            }
+          },
+          "confidenceScores" : {
+            "$ref" : "#/components/schemas/TargetConfidenceScoreLabel"
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "The target offset from the start of the sentence.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "The length of the target.",
+            "format" : "int32"
+          },
+          "text" : {
+            "type" : "string",
+            "description" : "The target text detected."
+          },
+          "relations" : {
+            "type" : "array",
+            "description" : "The array of either assessment or target objects which is related to the target.",
+            "items" : {
+              "$ref" : "#/components/schemas/TargetRelation"
+            }
+          }
+        }
+      },
+      "SentenceAssessment" : {
+        "required" : [ "confidenceScores", "isNegated", "length", "offset", "sentiment", "text" ],
+        "type" : "object",
+        "properties" : {
+          "sentiment" : {
+            "type" : "string",
+            "description" : "Assessment sentiment in the sentence.",
+            "enum" : [ "positive", "mixed", "negative" ],
+            "x-ms-enum" : {
+              "name" : "TokenSentimentValue",
+              "modelAsString" : false
+            }
+          },
+          "confidenceScores" : {
+            "$ref" : "#/components/schemas/TargetConfidenceScoreLabel"
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "The assessment offset from the start of the sentence.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "The length of the assessment.",
+            "format" : "int32"
+          },
+          "text" : {
+            "type" : "string",
+            "description" : "The assessment text detected."
+          },
+          "isNegated" : {
+            "type" : "boolean",
+            "description" : "The indicator representing if the assessment is negated."
+          }
+        }
+      },
+      "TargetRelation" : {
+        "required" : [ "ref", "relationType" ],
+        "type" : "object",
+        "properties" : {
+          "relationType" : {
+            "type" : "string",
+            "description" : "The type related to the target.",
+            "enum" : [ "assessment", "target" ],
+            "x-ms-enum" : {
+              "name" : "TargetRelationType",
+              "modelAsString" : false
+            }
+          },
+          "ref" : {
+            "type" : "string",
+            "description" : "The JSON pointer indicating the linked object."
+          }
+        }
+      },
+      "TargetConfidenceScoreLabel" : {
+        "required" : [ "negative", "positive" ],
+        "type" : "object",
+        "properties" : {
+          "positive" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "negative" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        },
+        "description" : "Represents the confidence scores across all sentiment classes: positive, neutral, negative."
+      },
+      "EntitiesResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentEntities"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "DocumentEntities" : {
+        "required" : [ "entities", "id", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "entities" : {
+            "type" : "array",
+            "description" : "Recognized entities in the document.",
+            "items" : {
+              "$ref" : "#/components/schemas/Entity"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "PiiDocumentEntities" : {
+        "required" : [ "entities", "id", "redactedText", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "redactedText" : {
+            "type" : "string",
+            "description" : "Returns redacted text."
+          },
+          "entities" : {
+            "type" : "array",
+            "description" : "Recognized entities in the document.",
+            "items" : {
+              "$ref" : "#/components/schemas/Entity"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "Entity" : {
+        "required" : [ "category", "confidenceScore", "length", "offset", "text" ],
+        "type" : "object",
+        "properties" : {
+          "text" : {
+            "type" : "string",
+            "description" : "Entity text as appears in the request."
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Entity type."
+          },
+          "subcategory" : {
+            "type" : "string",
+            "description" : "(Optional) Entity sub type."
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "Start position for the entity text. Use of different 'stringIndexType' values can affect the offset returned.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "Length for the entity text. Use of different 'stringIndexType' values can affect the length returned.",
+            "format" : "int32"
+          },
+          "confidenceScore" : {
+            "type" : "number",
+            "description" : "Confidence score between 0 and 1 of the extracted entity.",
+            "format" : "double"
+          }
+        }
+      },
+      "EntityLinkingResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentLinkedEntities"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "DocumentLinkedEntities" : {
+        "required" : [ "entities", "id", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "entities" : {
+            "type" : "array",
+            "description" : "Recognized well known entities in the document.",
+            "items" : {
+              "$ref" : "#/components/schemas/LinkedEntity"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "HealthcareJobState" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/JobMetadata"
+        }, {
+          "$ref" : "#/components/schemas/HealthcareTaskResult"
+        }, {
+          "$ref" : "#/components/schemas/Pagination"
+        } ]
+      },
+      "HealthcareResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentHealthcareEntities"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "DocumentHealthcareEntities" : {
+        "required" : [ "entities", "id", "relations", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "entities" : {
+            "type" : "array",
+            "description" : "Healthcare entities.",
+            "items" : {
+              "$ref" : "#/components/schemas/HealthcareEntity"
+            }
+          },
+          "relations" : {
+            "type" : "array",
+            "description" : "Healthcare entity relations.",
+            "items" : {
+              "$ref" : "#/components/schemas/HealthcareRelation"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "HealthcareEntity" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/HealthcareEntityProperties"
+        }, {
+          "$ref" : "#/components/schemas/HealthcareLinkingProperties"
+        } ]
+      },
+      "HealthcareRelation" : {
+        "required" : [ "entities", "relationType" ],
+        "type" : "object",
+        "properties" : {
+          "relationType" : {
+            "type" : "string",
+            "description" : "Type of relation. Examples include: `DosageOfMedication` or 'FrequencyOfMedication', etc.",
+            "enum" : [ "Abbreviation", "DirectionOfBodyStructure", "DirectionOfCondition", "DirectionOfExamination", "DirectionOfTreatment", "DosageOfMedication", "FormOfMedication", "FrequencyOfMedication", "FrequencyOfTreatment", "QualifierOfCondition", "RelationOfExamination", "RouteOfMedication", "TimeOfCondition", "TimeOfEvent", "TimeOfExamination", "TimeOfMedication", "TimeOfTreatment", "UnitOfCondition", "UnitOfExamination", "ValueOfCondition", "ValueOfExamination" ],
+            "x-ms-enum" : {
+              "name" : "relationType",
+              "modelAsString" : true
+            }
+          },
+          "entities" : {
+            "type" : "array",
+            "description" : "The entities in the relation.",
+            "items" : {
+              "$ref" : "#/components/schemas/HealthcareRelationEntity"
+            }
+          }
+        },
+        "description" : "Every relation is an entity graph of a certain relationType, where all entities are connected and have specific roles within the relation context."
+      },
+      "HealthcareAssertion" : {
+        "type" : "object",
+        "properties" : {
+          "conditionality" : {
+            "type" : "string",
+            "description" : "Describes any conditionality on the entity.",
+            "enum" : [ "hypothetical", "conditional" ],
+            "x-ms-enum" : {
+              "name" : "Conditionality",
+              "modelAsString" : false
+            }
+          },
+          "certainty" : {
+            "type" : "string",
+            "description" : "Describes the entities certainty and polarity.",
+            "enum" : [ "positive", "positivePossible", "neutralPossible", "negativePossible", "negative" ],
+            "x-ms-enum" : {
+              "name" : "Certainty",
+              "modelAsString" : false
+            }
+          },
+          "association" : {
+            "type" : "string",
+            "description" : "Describes if the entity is the subject of the text or if it describes someone else.",
+            "enum" : [ "subject", "other" ],
+            "x-ms-enum" : {
+              "name" : "Association",
+              "modelAsString" : false
+            }
+          }
+        }
+      },
+      "HealthcareRelationEntity" : {
+        "required" : [ "ref", "role" ],
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string",
+            "description" : "Reference link object, using a JSON pointer RFC 6901 (URI Fragment Identifier Representation), pointing to the entity ."
+          },
+          "role" : {
+            "type" : "string",
+            "description" : "Role of entity in the relationship. For example: 'CD20-positive diffuse large B-cell lymphoma' has the following entities with their roles in parenthesis:  CD20 (GeneOrProtein), Positive (Expression), diffuse large B-cell lymphoma (Diagnosis)."
+          }
+        }
+      },
+      "HealthcareEntityLink" : {
+        "required" : [ "dataSource", "id" ],
+        "type" : "object",
+        "properties" : {
+          "dataSource" : {
+            "type" : "string",
+            "description" : "Entity Catalog. Examples include: UMLS, CHV, MSH, etc."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Entity id in the given source catalog."
+          }
+        }
+      },
+      "HealthcareEntityProperties" : {
+        "required" : [ "category", "confidenceScore", "length", "offset", "text" ],
+        "type" : "object",
+        "properties" : {
+          "text" : {
+            "type" : "string",
+            "description" : "Entity text as appears in the request."
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Healthcare Entity Category.",
+            "enum" : [ "BodyStructure", "Age", "Gender", "ExaminationName", "Date", "Direction", "Frequency", "MeasurementValue", "MeasurementUnit", "RelationalOperator", "Time", "GeneOrProtein", "Variant", "AdministrativeEvent", "CareEnvironment", "HealthcareProfession", "Diagnosis", "SymptomOrSign", "ConditionQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm", "MedicationRoute", "FamilyRelation", "TreatmentName" ],
+            "x-ms-enum" : {
+              "name" : "healthcareEntityCategory",
+              "modelAsString" : true
+            }
+          },
+          "subcategory" : {
+            "type" : "string",
+            "description" : "(Optional) Entity sub type."
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "Start position for the entity text. Use of different 'stringIndexType' values can affect the offset returned.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "Length for the entity text. Use of different 'stringIndexType' values can affect the length returned.",
+            "format" : "int32"
+          },
+          "confidenceScore" : {
+            "type" : "number",
+            "description" : "Confidence score between 0 and 1 of the extracted entity.",
+            "format" : "double"
+          }
+        }
+      },
+      "HealthcareLinkingProperties" : {
+        "type" : "object",
+        "properties" : {
+          "assertion" : {
+            "$ref" : "#/components/schemas/HealthcareAssertion"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Preferred name for the entity. Example: 'histologically' would have a 'name' of 'histologic'."
+          },
+          "links" : {
+            "type" : "array",
+            "description" : "Entity references in known data sources.",
+            "items" : {
+              "$ref" : "#/components/schemas/HealthcareEntityLink"
+            }
+          }
+        }
+      },
+      "LinkedEntity" : {
+        "required" : [ "dataSource", "language", "matches", "name", "url" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Entity Linking formal name."
+          },
+          "matches" : {
+            "type" : "array",
+            "description" : "List of instances this entity appears in the text.",
+            "items" : {
+              "$ref" : "#/components/schemas/Match"
+            }
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Language used in the data source."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Unique identifier of the recognized entity from the data source."
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "URL for the entity's page from the data source."
+          },
+          "dataSource" : {
+            "type" : "string",
+            "description" : "Data source used to extract entity linking, such as Wiki/Bing etc."
+          },
+          "bingId" : {
+            "type" : "string",
+            "description" : "Bing Entity Search API unique identifier of the recognized entity."
+          }
+        }
+      },
+      "Match" : {
+        "required" : [ "confidenceScore", "length", "offset", "text" ],
+        "type" : "object",
+        "properties" : {
+          "confidenceScore" : {
+            "type" : "number",
+            "description" : "If a well known item is recognized, a decimal number denoting the confidence level between 0 and 1 will be returned.",
+            "format" : "double"
+          },
+          "text" : {
+            "type" : "string",
+            "description" : "Entity text as appears in the request."
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "Start position for the entity match text.",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "description" : "Length for the entity match text.",
+            "format" : "int32"
+          }
+        }
+      },
+      "AnalysisInput" : {
+        "required" : [ "analysisInput" ],
+        "type" : "object",
+        "properties" : {
+          "analysisInput" : {
+            "$ref" : "#/components/schemas/MultiLanguageBatchInput"
+          }
+        }
+      },
+      "EntitiesTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/EntitiesResult"
+          }
+        }
+      },
+      "PiiTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/PiiResult"
+          }
+        }
+      },
+      "KeyPhraseTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/KeyPhraseResult"
+          }
+        }
+      },
+      "EntityLinkingTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/EntityLinkingResult"
+          }
+        }
+      },
+      "SentimentTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/SentimentResponse"
+          }
+        }
+      },
+      "HealthcareTaskResult" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "$ref" : "#/components/schemas/HealthcareResult"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsError"
+            }
+          }
+        }
+      },
+      "JobDescriptor" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string",
+            "description" : "Optional display name for the analysis job."
+          }
+        }
+      },
+      "JobMetadata" : {
+        "required" : [ "createdDateTime", "jobId", "lastUpdateDateTime", "status" ],
+        "type" : "object",
+        "properties" : {
+          "createdDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "expirationDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "jobId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "lastUpdateDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "notStarted", "running", "succeeded", "failed", "cancelled", "cancelling" ],
+            "x-ms-enum" : {
+              "modelAsString" : false,
+              "name" : "State"
+            }
+          }
+        }
+      },
+      "AnalyzeJobDisplayName" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AnalyzeJobMetadata" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/JobMetadata"
+        }, {
+          "$ref" : "#/components/schemas/AnalyzeJobDisplayName"
+        } ]
+      },
+      "AnalyzeJobErrorsAndStatistics" : {
+        "type" : "object",
+        "properties" : {
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          }
+        }
+      },
+      "KeyPhraseResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentKeyPhrases"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "DocumentKeyPhrases" : {
+        "required" : [ "id", "keyPhrases", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "keyPhrases" : {
+            "type" : "array",
+            "description" : "A list of representative words or phrases. The number of key phrases returned is proportional to the number of words in the input document.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "KeyPhrasesTask" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "$ref" : "#/components/schemas/KeyPhrasesTaskParameters"
+          },
+          "taskName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "EntityLinkingTask" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "$ref" : "#/components/schemas/EntitiesTaskParameters"
+          },
+          "taskName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "LanguageBatchInput" : {
+        "required" : [ "documents" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LanguageInput"
+            }
+          }
+        }
+      },
+      "LanguageInput" : {
+        "required" : [ "id", "text" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "countryHint" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Pagination" : {
+        "type" : "object",
+        "properties" : {
+          "@nextLink" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PiiResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/PiiDocumentEntities"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "LanguageResult" : {
+        "required" : [ "documents", "errors", "modelVersion" ],
+        "type" : "object",
+        "properties" : {
+          "documents" : {
+            "type" : "array",
+            "description" : "Response by document",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentLanguage"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors by document id.",
+            "items" : {
+              "$ref" : "#/components/schemas/DocumentError"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/RequestStatistics"
+          },
+          "modelVersion" : {
+            "type" : "string",
+            "description" : "This field indicates which model is used for scoring."
+          }
+        }
+      },
+      "DocumentLanguage" : {
+        "required" : [ "detectedLanguage", "id", "warnings" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique, non-empty document identifier."
+          },
+          "detectedLanguage" : {
+            "$ref" : "#/components/schemas/DetectedLanguage"
+          },
+          "warnings" : {
+            "type" : "array",
+            "description" : "Warnings encountered while processing document.",
+            "items" : {
+              "$ref" : "#/components/schemas/TextAnalyticsWarning"
+            }
+          },
+          "statistics" : {
+            "$ref" : "#/components/schemas/DocumentStatistics"
+          }
+        }
+      },
+      "DetectedLanguage" : {
+        "required" : [ "confidenceScore", "iso6391Name", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Long name of a detected language (e.g. English, French)."
+          },
+          "iso6391Name" : {
+            "type" : "string",
+            "description" : "A two letter representation of the detected language according to the ISO 639-1 standard (e.g. en, fr)."
+          },
+          "confidenceScore" : {
+            "type" : "number",
+            "description" : "A confidence score between 0 and 1. Scores close to 1 indicate 100% certainty that the identified language is true.",
+            "format" : "double"
+          }
+        }
+      },
+      "StringIndexType" : {
+        "type" : "string",
+        "default" : "TextElement_v8",
+        "enum" : [ "TextElement_v8", "UnicodeCodePoint", "Utf16CodeUnit" ],
+        "x-ms-enum" : {
+          "name" : "StringIndexType",
+          "modelAsString" : true,
+          "values" : [ {
+            "value" : "TextElement_v8",
+            "description" : "Returned offset and length values will correspond to TextElements (Graphemes and Grapheme clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is written in .Net Framework or .Net Core and you will be using StringInfo."
+          }, {
+            "value" : "UnicodeCodePoint",
+            "description" : "Returned offset and length values will correspond to Unicode code points. Use this option if your application is written in a language that support Unicode, for example Python."
+          }, {
+            "value" : "Utf16CodeUnit",
+            "description" : "Returned offset and length values will correspond to UTF-16 code units. Use this option if your application is written in a language that support Unicode, for example Java, JavaScript."
+          } ]
+        }
+      },
+      "PiiCategories" : {
+        "uniqueItems" : true,
+        "type" : "array",
+        "description" : "(Optional) describes the PII categories to return",
+        "items" : {
+          "type" : "string",
+          "enum" : [ "ABARoutingNumber", "ARNationalIdentityNumber", "AUBankAccountNumber", "AUDriversLicenseNumber", "AUMedicalAccountNumber", "AUPassportNumber", "AUTaxFileNumber", "AUBusinessNumber", "AUCompanyNumber", "ATIdentityCard", "ATTaxIdentificationNumber", "ATValueAddedTaxNumber", "AzureDocumentDBAuthKey", "AzureIAASDatabaseConnectionAndSQLString", "AzureIoTConnectionString", "AzurePublishSettingPassword", "AzureRedisCacheString", "AzureSAS", "AzureServiceBusString", "AzureStorageAccountKey", "AzureStorageAccountGeneric", "BENationalNumber", "BENationalNumberV2", "BEValueAddedTaxNumber", "BRCPFNumber", "BRLegalEntityNumber", "BRNationalIDRG", "BGUniformCivilNumber", "CABankAccountNumber", "CADriversLicenseNumber", "CAHealthServiceNumber", "CAPassportNumber", "CAPersonalHealthIdentification", "CASocialInsuranceNumber", "CLIdentityCardNumber", "CNResidentIdentityCardNumber", "CreditCardNumber", "HRIdentityCardNumber", "HRNationalIDNumber", "HRPersonalIdentificationNumber", "HRPersonalIdentificationOIBNumberV2", "CYIdentityCard", "CYTaxIdentificationNumber", "CZPersonalIdentityNumber", "CZPersonalIdentityV2", "DKPersonalIdentificationNumber", "DKPersonalIdentificationV2", "DrugEnforcementAgencyNumber", "EEPersonalIdentificationCode", "EUDebitCardNumber", "EUDriversLicenseNumber", "EUGPSCoordinates", "EUNationalIdentificationNumber", "EUPassportNumber", "EUSocialSecurityNumber", "EUTaxIdentificationNumber", "FIEuropeanHealthNumber", "FINationalID", "FINationalIDV2", "FIPassportNumber", "FRDriversLicenseNumber", "FRHealthInsuranceNumber", "FRNationalID", "FRPassportNumber", "FRSocialSecurityNumber", "FRTaxIdentificationNumber", "FRValueAddedTaxNumber", "DEDriversLicenseNumber", "DEPassportNumber", "DEIdentityCardNumber", "DETaxIdentificationNumber", "DEValueAddedNumber", "GRNationalIDCard", "GRNationalIDV2", "GRTaxIdentificationNumber", "HKIdentityCardNumber", "HUValueAddedNumber", "HUPersonalIdentificationNumber", "HUTaxIdentificationNumber", "INPermanentAccount", "INUniqueIdentificationNumber", "IDIdentityCardNumber", "InternationalBankingAccountNumber", "IEPersonalPublicServiceNumber", "IEPersonalPublicServiceNumberV2", "ILBankAccountNumber", "ILNationalID", "ITDriversLicenseNumber", "ITFiscalCode", "ITValueAddedTaxNumber", "JPBankAccountNumber", "JPDriversLicenseNumber", "JPPassportNumber", "JPResidentRegistrationNumber", "JPSocialInsuranceNumber", "JPMyNumberCorporate", "JPMyNumberPersonal", "JPResidenceCardNumber", "LVPersonalCode", "LTPersonalCode", "LUNationalIdentificationNumberNatural", "LUNationalIdentificationNumberNonNatural", "MYIdentityCardNumber", "MTIdentityCardNumber", "MTTaxIDNumber", "NLCitizensServiceNumber", "NLCitizensServiceNumberV2", "NLTaxIdentificationNumber", "NLValueAddedTaxNumber", "NZBankAccountNumber", "NZDriversLicenseNumber", "NZInlandRevenueNumber", "NZMinistryOfHealthNumber", "NZSocialWelfareNumber", "NOIdentityNumber", "PHUnifiedMultiPurposeIDNumber", "PLIdentityCard", "PLNationalID", "PLNationalIDV2", "PLPassportNumber", "PLTaxIdentificationNumber", "PLREGONNumber", "PTCitizenCardNumber", "PTCitizenCardNumberV2", "PTTaxIdentificationNumber", "ROPersonalNumericalCode", "RUPassportNumberDomestic", "RUPassportNumberInternational", "SANationalID", "SGNationalRegistrationIdentityCardNumber", "SKPersonalNumber", "SITaxIdentificationNumber", "SIUniqueMasterCitizenNumber", "ZAIdentificationNumber", "KRResidentRegistrationNumber", "ESDNI", "ESSocialSecurityNumber", "ESTaxIdentificationNumber", "SQLServerConnectionString", "SENationalID", "SENationalIDV2", "SEPassportNumber", "SETaxIdentificationNumber", "SWIFTCode", "CHSocialSecurityNumber", "TWNationalID", "TWPassportNumber", "TWResidentCertificate", "THPopulationIdentificationCode", "TRNationalIdentificationNumber", "UKDriversLicenseNumber", "UKElectoralRollNumber", "UKNationalHealthNumber", "UKNationalInsuranceNumber", "UKUniqueTaxpayerNumber", "USUKPassportNumber", "USBankAccountNumber", "USDriversLicenseNumber", "USIndividualTaxpayerIdentification", "USSocialSecurityNumber", "UAPassportNumberDomestic", "UAPassportNumberInternational", "Organization", "Email", "URL", "Age", "PhoneNumber", "IPAddress", "Date", "Person", "Address", "All", "Default" ],
+          "x-ms-enum" : {
+            "name" : "PiiCategory",
+            "modelAsString" : true
+          }
+        }
+      },
+      "JobManifestTasks" : {
+        "type" : "object",
+        "properties" : {
+          "entityRecognitionTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/EntitiesTask"
+            }
+          },
+          "entityRecognitionPiiTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PiiTask"
+            }
+          },
+          "keyPhraseExtractionTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/KeyPhrasesTask"
+            }
+          },
+          "entityLinkingTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/EntityLinkingTask"
+            }
+          },
+          "sentimentAnalysisTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SentimentAnalysisTask"
+            }
+          }
+        },
+        "description" : "The set of tasks to execute on the input documents. Cannot specify the same task more than once."
+      },
+      "PiiTaskParameters" : {
+        "type" : "object",
+        "properties" : {
+          "domain" : {
+            "type" : "string",
+            "default" : "none",
+            "enum" : [ "phi", "none" ]
+          },
+          "model-version" : {
+            "type" : "string",
+            "default" : "latest"
+          },
+          "loggingOptOut" : {
+            "type" : "boolean",
+            "default" : true
+          },
+          "piiCategories" : {
+            "$ref" : "#/components/schemas/PiiCategories"
+          },
+          "stringIndexType" : {
+            "$ref" : "#/components/schemas/StringIndexType"
+          }
+        }
+      },
+      "EntitiesTaskParameters" : {
+        "type" : "object",
+        "properties" : {
+          "model-version" : {
+            "type" : "string",
+            "default" : "latest"
+          },
+          "loggingOptOut" : {
+            "type" : "boolean",
+            "default" : false
+          },
+          "stringIndexType" : {
+            "$ref" : "#/components/schemas/StringIndexType"
+          }
+        }
+      },
+      "SentimentAnalysisTaskParameters" : {
+        "type" : "object",
+        "properties" : {
+          "model-version" : {
+            "type" : "string",
+            "default" : "latest"
+          },
+          "loggingOptOut" : {
+            "type" : "boolean",
+            "default" : false
+          },
+          "opinionMining" : {
+            "type" : "boolean",
+            "default" : false
+          },
+          "stringIndexType" : {
+            "$ref" : "#/components/schemas/StringIndexType"
+          }
+        }
+      },
+      "TasksStateTasksEntityRecognitionTasks" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TaskState"
+        }, {
+          "$ref" : "#/components/schemas/EntitiesTaskResult"
+        } ]
+      },
+      "TasksStateTasksEntityRecognitionPiiTasks" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TaskState"
+        }, {
+          "$ref" : "#/components/schemas/PiiTaskResult"
+        } ]
+      },
+      "TasksStateTasksKeyPhraseExtractionTasks" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TaskState"
+        }, {
+          "$ref" : "#/components/schemas/KeyPhraseTaskResult"
+        } ]
+      },
+      "TasksStateTasksEntityLinkingTasks" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TaskState"
+        }, {
+          "$ref" : "#/components/schemas/EntityLinkingTaskResult"
+        } ]
+      },
+      "TasksStateTasksSentimentAnalysisTasks" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TaskState"
+        }, {
+          "$ref" : "#/components/schemas/SentimentTaskResult"
+        } ]
+      },
+      "TasksStateTasks" : {
+        "required" : [ "completed", "failed", "inProgress", "total" ],
+        "type" : "object",
+        "properties" : {
+          "completed" : {
+            "type" : "integer"
+          },
+          "failed" : {
+            "type" : "integer"
+          },
+          "inProgress" : {
+            "type" : "integer"
+          },
+          "total" : {
+            "type" : "integer"
+          },
+          "entityRecognitionTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TasksStateTasksEntityRecognitionTasks"
+            }
+          },
+          "entityRecognitionPiiTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TasksStateTasksEntityRecognitionPiiTasks"
+            }
+          },
+          "keyPhraseExtractionTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TasksStateTasksKeyPhraseExtractionTasks"
+            }
+          },
+          "entityLinkingTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TasksStateTasksEntityLinkingTasks"
+            }
+          },
+          "sentimentAnalysisTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TasksStateTasksSentimentAnalysisTasks"
+            }
+          }
+        }
+      },
+      "KeyPhrasesTaskParameters" : {
+        "type" : "object",
+        "properties" : {
+          "model-version" : {
+            "type" : "string",
+            "default" : "latest"
+          },
+          "loggingOptOut" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }
+      }
+    },
+    "parameters" : {
+      "ApiVersion" : {
+        "name" : "ApiVersion",
+        "in" : "path",
+        "description" : "Text Analytics API version (for example, v3.0).",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "enum" : [ "v3.1" ],
+          "x-ms-parameter-location" : "client",
+          "x-ms-skip-url-encoding" : true
+        },
+        "x-ms-parameter-location" : "client",
+        "x-ms-skip-url-encoding" : true
+      },
+      "Endpoint" : {
+        "name" : "Endpoint",
+        "in" : "path",
+        "description" : "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "x-ms-parameter-location" : "client",
+          "x-ms-skip-url-encoding" : true
+        },
+        "x-ms-parameter-location" : "client",
+        "x-ms-skip-url-encoding" : true
+      },
+      "StringIndexType" : {
+        "name" : "stringIndexType",
+        "in" : "query",
+        "description" : "(Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets",
+        "schema" : {
+          "type" : "string",
+          "default" : "TextElement_v8",
+          "enum" : [ "TextElement_v8", "UnicodeCodePoint", "Utf16CodeUnit" ],
+          "x-ms-enum" : {
+            "name" : "StringIndexType",
+            "modelAsString" : true,
+            "values" : [ {
+              "value" : "TextElement_v8",
+              "description" : "Returned offset and length values will correspond to TextElements (Graphemes and Grapheme clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is written in .Net Framework or .Net Core and you will be using StringInfo."
+            }, {
+              "value" : "UnicodeCodePoint",
+              "description" : "Returned offset and length values will correspond to Unicode code points. Use this option if your application is written in a language that support Unicode, for example Python."
+            }, {
+              "value" : "Utf16CodeUnit",
+              "description" : "Returned offset and length values will correspond to UTF-16 code units. Use this option if your application is written in a language that support Unicode, for example Java, JavaScript."
+            } ]
+          },
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-enum" : {
+          "name" : "StringIndexType",
+          "modelAsString" : true,
+          "values" : [ {
+            "value" : "TextElement_v8",
+            "description" : "Returned offset and length values will correspond to TextElements (Graphemes and Grapheme clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is written in .Net Framework or .Net Core and you will be using StringInfo."
+          }, {
+            "value" : "UnicodeCodePoint",
+            "description" : "Returned offset and length values will correspond to Unicode code points. Use this option if your application is written in a language that support Unicode, for example Python."
+          }, {
+            "value" : "Utf16CodeUnit",
+            "description" : "Returned offset and length values will correspond to UTF-16 code units. Use this option if your application is written in a language that support Unicode, for example Java, JavaScript."
+          } ]
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "PiiCategories" : {
+        "name" : "piiCategories",
+        "in" : "query",
+        "description" : "(Optional) describes the PII categories to return",
+        "style" : "form",
+        "explode" : false,
+        "schema" : {
+          "uniqueItems" : true,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "ABARoutingNumber", "ARNationalIdentityNumber", "AUBankAccountNumber", "AUDriversLicenseNumber", "AUMedicalAccountNumber", "AUPassportNumber", "AUTaxFileNumber", "AUBusinessNumber", "AUCompanyNumber", "ATIdentityCard", "ATTaxIdentificationNumber", "ATValueAddedTaxNumber", "AzureDocumentDBAuthKey", "AzureIAASDatabaseConnectionAndSQLString", "AzureIoTConnectionString", "AzurePublishSettingPassword", "AzureRedisCacheString", "AzureSAS", "AzureServiceBusString", "AzureStorageAccountKey", "AzureStorageAccountGeneric", "BENationalNumber", "BENationalNumberV2", "BEValueAddedTaxNumber", "BRCPFNumber", "BRLegalEntityNumber", "BRNationalIDRG", "BGUniformCivilNumber", "CABankAccountNumber", "CADriversLicenseNumber", "CAHealthServiceNumber", "CAPassportNumber", "CAPersonalHealthIdentification", "CASocialInsuranceNumber", "CLIdentityCardNumber", "CNResidentIdentityCardNumber", "CreditCardNumber", "HRIdentityCardNumber", "HRNationalIDNumber", "HRPersonalIdentificationNumber", "HRPersonalIdentificationOIBNumberV2", "CYIdentityCard", "CYTaxIdentificationNumber", "CZPersonalIdentityNumber", "CZPersonalIdentityV2", "DKPersonalIdentificationNumber", "DKPersonalIdentificationV2", "DrugEnforcementAgencyNumber", "EEPersonalIdentificationCode", "EUDebitCardNumber", "EUDriversLicenseNumber", "EUGPSCoordinates", "EUNationalIdentificationNumber", "EUPassportNumber", "EUSocialSecurityNumber", "EUTaxIdentificationNumber", "FIEuropeanHealthNumber", "FINationalID", "FINationalIDV2", "FIPassportNumber", "FRDriversLicenseNumber", "FRHealthInsuranceNumber", "FRNationalID", "FRPassportNumber", "FRSocialSecurityNumber", "FRTaxIdentificationNumber", "FRValueAddedTaxNumber", "DEDriversLicenseNumber", "DEPassportNumber", "DEIdentityCardNumber", "DETaxIdentificationNumber", "DEValueAddedNumber", "GRNationalIDCard", "GRNationalIDV2", "GRTaxIdentificationNumber", "HKIdentityCardNumber", "HUValueAddedNumber", "HUPersonalIdentificationNumber", "HUTaxIdentificationNumber", "INPermanentAccount", "INUniqueIdentificationNumber", "IDIdentityCardNumber", "InternationalBankingAccountNumber", "IEPersonalPublicServiceNumber", "IEPersonalPublicServiceNumberV2", "ILBankAccountNumber", "ILNationalID", "ITDriversLicenseNumber", "ITFiscalCode", "ITValueAddedTaxNumber", "JPBankAccountNumber", "JPDriversLicenseNumber", "JPPassportNumber", "JPResidentRegistrationNumber", "JPSocialInsuranceNumber", "JPMyNumberCorporate", "JPMyNumberPersonal", "JPResidenceCardNumber", "LVPersonalCode", "LTPersonalCode", "LUNationalIdentificationNumberNatural", "LUNationalIdentificationNumberNonNatural", "MYIdentityCardNumber", "MTIdentityCardNumber", "MTTaxIDNumber", "NLCitizensServiceNumber", "NLCitizensServiceNumberV2", "NLTaxIdentificationNumber", "NLValueAddedTaxNumber", "NZBankAccountNumber", "NZDriversLicenseNumber", "NZInlandRevenueNumber", "NZMinistryOfHealthNumber", "NZSocialWelfareNumber", "NOIdentityNumber", "PHUnifiedMultiPurposeIDNumber", "PLIdentityCard", "PLNationalID", "PLNationalIDV2", "PLPassportNumber", "PLTaxIdentificationNumber", "PLREGONNumber", "PTCitizenCardNumber", "PTCitizenCardNumberV2", "PTTaxIdentificationNumber", "ROPersonalNumericalCode", "RUPassportNumberDomestic", "RUPassportNumberInternational", "SANationalID", "SGNationalRegistrationIdentityCardNumber", "SKPersonalNumber", "SITaxIdentificationNumber", "SIUniqueMasterCitizenNumber", "ZAIdentificationNumber", "KRResidentRegistrationNumber", "ESDNI", "ESSocialSecurityNumber", "ESTaxIdentificationNumber", "SQLServerConnectionString", "SENationalID", "SENationalIDV2", "SEPassportNumber", "SETaxIdentificationNumber", "SWIFTCode", "CHSocialSecurityNumber", "TWNationalID", "TWPassportNumber", "TWResidentCertificate", "THPopulationIdentificationCode", "TRNationalIdentificationNumber", "UKDriversLicenseNumber", "UKElectoralRollNumber", "UKNationalHealthNumber", "UKNationalInsuranceNumber", "UKUniqueTaxpayerNumber", "USUKPassportNumber", "USBankAccountNumber", "USDriversLicenseNumber", "USIndividualTaxpayerIdentification", "USSocialSecurityNumber", "UAPassportNumberDomestic", "UAPassportNumberInternational", "Organization", "Email", "URL", "Age", "PhoneNumber", "IPAddress", "Date", "Person", "Address", "All", "Default" ],
+            "x-ms-enum" : {
+              "name" : "PiiCategory",
+              "modelAsString" : true
+            }
+          },
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "JobId" : {
+        "name" : "jobId",
+        "in" : "path",
+        "description" : "Job ID",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "format" : "uuid",
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "AnalyzeJobId" : {
+        "name" : "jobId",
+        "in" : "path",
+        "description" : "Job ID for Analyze",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "ShowStats" : {
+        "name" : "showStats",
+        "in" : "query",
+        "description" : "(Optional) if set to true, response will contain request and document level statistics.",
+        "schema" : {
+          "type" : "boolean",
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "LoggingOptOut" : {
+        "name" : "loggingOptOut",
+        "in" : "query",
+        "description" : "(Optional) If set to true, you opt-out of having your text input logged for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to allow for troubleshooting issues in providing you with the Text Analytics natural language processing functions. Setting this parameter to true, disables input logging and may limit our ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI principles at https://www.microsoft.com/en-us/ai/responsible-ai.",
+        "schema" : {
+          "type" : "boolean",
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      },
+      "ModelVersion" : {
+        "name" : "model-version",
+        "in" : "query",
+        "description" : "(Optional) This value indicates which model will be used for scoring. If a model-version is not specified, the API should default to the latest, non-preview version. ",
+        "schema" : {
+          "type" : "string",
+          "x-ms-parameter-location" : "method"
+        },
+        "x-ms-parameter-location" : "method"
+      }
+    },
+    "requestBodies" : {
+      "MultiLanguageInput" : {
+        "description" : "Collection of documents to analyze.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/MultiLanguageBatchInput"
+            }
+          }
+        },
+        "required" : true,
+        "x-ms-parameter-location" : "method"
+      },
+      "LanguageInput" : {
+        "description" : "Collection of documents to analyze for language endpoint.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/LanguageBatchInput"
+            }
+          }
+        },
+        "required" : true,
+        "x-ms-parameter-location" : "method"
+      }
+    },
+    "securitySchemes" : {
+      "apim_key" : {
+        "type" : "apiKey",
+        "name" : "Ocp-Apim-Subscription-Key",
+        "in" : "header"
+      }
+    }
+  },
+  "x-ms-parameterized-host" : {
+    "hostTemplate" : "{Endpoint}/text/analytics/{ApiVersion}",
+    "useSchemePrefix" : false,
+    "parameters" : [ {
+      "$ref" : "#/parameters/Endpoint"
+    }, {
+      "$ref" : "#/parameters/ApiVersion"
+    } ]
+  },
+  "x-original-swagger-version" : "2.0"
+}

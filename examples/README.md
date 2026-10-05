@@ -2,13 +2,14 @@
 
 The `ballerinax/azure.textanalytics` connector provides practical examples illustrating usage in various scenarios.
 
-[//]: # (TODO: Add examples)
-1. 
-2. 
+1. [Customer feedback insights](./customer_feedback_insights/customer_feedback_insights.md) - Detect the language, score the sentiment and extract key phrases from customer feedback.
+2. [PII redaction review](./pii_redaction_review/pii_redaction_review.md) - Redact personal information from support messages and link the remaining entities.
 
 ## Prerequisites
 
-[//]: # (TODO: Add prerequisites)
+1. An Azure Cognitive Services Language (Text Analytics) resource with its subscription key and endpoint.
+
+2. Create a `Config.toml` file in the example directory with the `subscriptionKey` and `serviceUrl` values (the endpoint followed by `/text/analytics/v3.1`).
 
 ## Running an example
 
